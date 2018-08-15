@@ -6,3 +6,4 @@
 app/fabric.properties
 app/flurry.config
 *.iml
+app/

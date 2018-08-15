@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Movie4kParser extends Parser{
     public static final int PARSER_ID = 1;
-    public static final String URL_BASE = "http://www.movie4k.tv/";
+    public static final String URL_BASE = "https://movie4k.io/";
 
     private static final SparseArray<Integer> languageResMap = new SparseArray<Integer>();
     private static final SparseArray<String> languageKeyMap = new SparseArray<String>();

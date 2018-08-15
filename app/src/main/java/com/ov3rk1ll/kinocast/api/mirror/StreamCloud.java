@@ -32,7 +32,7 @@ public class StreamCloud extends Host {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     public static String getMirrorLink(Document doc){
@@ -61,9 +61,9 @@ public class StreamCloud extends Host {
             Log.d(TAG, "1st Request. Got " + link);
             queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_1sttry));
             if(link != null) return link;
-            queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_wait, "10"));
+            queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_wait, "5"));
             Log.d(TAG, "single request failed. Waiting 10s and retry.");
-            for(int i = 10; i >= 0; i--){
+            for(int i = 5; i >= 0; i--){
                 queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_wait, String.valueOf(i)));
                 SystemClock.sleep(1000);
             }

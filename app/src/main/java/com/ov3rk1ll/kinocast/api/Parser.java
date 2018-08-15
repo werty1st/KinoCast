@@ -112,6 +112,20 @@ public abstract class Parser {
     //seems to need interceptor too
     public String getBody(String url) {
 
+        /*
+        Request request = new Request.Builder().url(url).build();
+        try {
+            Response response = client.newCall(request).execute();
+            for(String key : response.headers().names()){
+                Log.i(TAG, key + "=" + response.header(key));
+            }
+            return response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+        */
+
         OkHttpClient noFollowClient = client.newBuilder().followRedirects(false).build();
         Request request = new Request.Builder().url(url).build();
         Log.i(TAG, "read text from " + url + ", cookies=" + noFollowClient.cookieJar().toString());
