@@ -32,7 +32,7 @@ public class Vodlocker extends Host {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override

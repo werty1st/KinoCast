@@ -61,8 +61,8 @@ public abstract class Parser {
         switch (id) {
             case KinoxParser.PARSER_ID:
                 return new KinoxParser(url);
-            case Movie4kParser.PARSER_ID:
-                return new Movie4kParser(url);
+            //case Movie4kParser.PARSER_ID:
+            //    return new Movie4kParser(url);
         }
         return null;
     }
@@ -109,7 +109,23 @@ public abstract class Parser {
         return Jsoup.parse(body);
     }
 
+    //seems to need interceptor too
     public String getBody(String url) {
+
+        /*
+        Request request = new Request.Builder().url(url).build();
+        try {
+            Response response = client.newCall(request).execute();
+            for(String key : response.headers().names()){
+                Log.i(TAG, key + "=" + response.header(key));
+            }
+            return response.body().string();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return null;
+        */
+
         OkHttpClient noFollowClient = client.newBuilder().followRedirects(false).build();
         Request request = new Request.Builder().url(url).build();
         Log.i(TAG, "read text from " + url + ", cookies=" + noFollowClient.cookieJar().toString());
@@ -125,6 +141,7 @@ public abstract class Parser {
             e.printStackTrace();
         }
         return null;
+
     }
 
 
@@ -159,9 +176,9 @@ public abstract class Parser {
 
     public abstract List<Host> getHosterList(ViewModel item, int season, String episode);
 
-    public abstract String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, int hoster, int mirror);
+    public abstract String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, Host host);
 
-    public abstract String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, int hoster, int mirror, int season, String episode);
+    public abstract String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, Host host, int season, String episode);
 
     public abstract String[] getSearchSuggestions(String query);
 
