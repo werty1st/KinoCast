@@ -18,6 +18,7 @@ ext {
             version += " [Optimus Crime]" ;// + versionBuild;
         return version
     }
+    supportLibVersion = '26.0.1'
 }
 
 /*flurryCrash {
@@ -29,12 +30,12 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
-    compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.ov3rk1ll.kinocast"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
 
         versionCode versionMajor * 10000 + versionMinor * 1000 + versionPatch * 100 + versionBuild
         versionName = calculateVersionName()
@@ -76,10 +77,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:design:25.4.0'
-    implementation 'com.android.support:recyclerview-v7:25.4.0'
-    implementation 'com.android.support:palette-v7:25.4.0'
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:palette-v7:${supportLibVersion}"
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.github.woxthebox:draglistview:1.2.9'
     implementation 'org.jsoup:jsoup:1.9.1'
