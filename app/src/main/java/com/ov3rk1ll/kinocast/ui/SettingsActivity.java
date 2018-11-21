@@ -14,6 +14,7 @@ import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -93,6 +94,12 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
+
+                    //prevent app from crashing with empty url
+                    if ( !Patterns.WEB_URL.matcher(o.toString()).matches()){
+                        Toast.makeText(getActivity(), "Invalid URL", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     Parser.selectParser(getActivity(), preferences.getInt("parser", KinoxParser.PARSER_ID), o.toString());
                     preference.setSummary(o.toString());
