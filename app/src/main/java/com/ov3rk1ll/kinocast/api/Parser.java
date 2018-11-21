@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
+import android.widget.Toast;
 
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
@@ -53,6 +55,15 @@ public abstract class Parser {
     public static Parser selectByParserId(Context context, int id){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String url = preferences.getString("url", context.getString(R.string.defaul_url));
+
+        //prevent app from crashing with empty url
+        if ( !Patterns.WEB_URL.matcher(url).matches()){
+            url = context.getString(R.string.defaul_url);
+            SharedPreferences.Editor prefEditor = preferences.edit();
+            prefEditor.putString("url", url);
+            prefEditor.commit();
+            Toast.makeText(context,"Resetting invalid URL to default", Toast.LENGTH_SHORT);
+        }
         return selectByParserId(id, url);
     }
     private static Parser selectByParserId(int id, String url) {

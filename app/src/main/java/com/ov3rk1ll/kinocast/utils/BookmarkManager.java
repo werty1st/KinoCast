@@ -1,6 +1,12 @@
 package com.ov3rk1ll.kinocast.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.ov3rk1ll.kinocast.api.Parser;
@@ -18,6 +24,7 @@ import java.util.Comparator;
 
 public class BookmarkManager extends ArrayList<BookmarkManager.Bookmark> {
     private static final String FILENAME = "bookmark.dat";
+    private static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     private transient Context context;
     private transient boolean autoSave = true;
@@ -27,11 +34,22 @@ public class BookmarkManager extends ArrayList<BookmarkManager.Bookmark> {
         restore();
     }
 
+
+
+
     private void save(){
         try {
-            File f = new File(context.getFilesDir(), FILENAME);
+            //File f = new File(context.getFilesDir(), FILENAME);
+
+            File f = new File(Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOCUMENTS), FILENAME);
+
             if(f.exists()) f.delete();
-            FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            //FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            FileOutputStream fos = new FileOutputStream(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +"/"+ FILENAME, false);
+
+
             ObjectOutputStream os = new ObjectOutputStream(fos);
             os.writeObject(this);
             os.close();
@@ -43,7 +61,9 @@ public class BookmarkManager extends ArrayList<BookmarkManager.Bookmark> {
 
     public void restore(){
         try {
-            FileInputStream fis = context.openFileInput(FILENAME);
+            //FileInputStream fis = context.openFileInput(FILENAME);
+            FileInputStream fis = new FileInputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS) +"/"+ FILENAME);
+
             ObjectInputStream is = new ObjectInputStream(fis);
             BookmarkManager simpleClass = (BookmarkManager) is.readObject();
             is.close();
