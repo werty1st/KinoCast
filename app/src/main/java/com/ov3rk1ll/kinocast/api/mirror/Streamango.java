@@ -114,7 +114,7 @@ public class Streamango extends Host {
                 break;
         }
 
-
+        if(solvedUrl[0].equalsIgnoreCase("https:null")) return null;
         return solvedUrl[0];
 
     }
