@@ -18,6 +18,7 @@ public abstract class Host {
             StreamCherry.class,
             Streamango.class,
             Vidoza.class,
+            VShare.class,
             Vidlox.class
     };
 
