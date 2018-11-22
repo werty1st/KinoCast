@@ -17,7 +17,9 @@ public abstract class Host {
             Vodlocker.class,
             StreamCherry.class,
             Streamango.class,
-            Vidoza.class
+            Vidoza.class,
+            VShare.class,
+            Vidlox.class
     };
 
     public static Host selectById(int id){

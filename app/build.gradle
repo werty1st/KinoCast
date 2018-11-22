@@ -18,6 +18,7 @@ ext {
             version += " [Optimus Prime]" ;// + versionBuild;
         return version
     }
+    supportLibVersion = '26.0.1'
 }
 
 /*flurryCrash {
@@ -76,10 +77,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support:design:25.4.0'
-    implementation 'com.android.support:recyclerview-v7:25.4.0'
-    implementation 'com.android.support:palette-v7:25.4.0'
+    implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:design:${supportLibVersion}"
+    implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+    implementation "com.android.support:palette-v7:${supportLibVersion}"
     implementation 'com.squareup.okhttp3:okhttp:3.6.0'
     implementation 'com.github.woxthebox:draglistview:1.2.9'
     implementation 'org.jsoup:jsoup:1.9.1'
