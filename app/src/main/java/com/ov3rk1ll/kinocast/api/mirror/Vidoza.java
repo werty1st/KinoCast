@@ -36,7 +36,7 @@ public class Vidoza extends Host {
         if(TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
-            Document doc = Jsoup.connect("https:" + url)
+            Document doc = Jsoup.connect(url)
                     .userAgent(Utils.USER_AGENT)
                     .timeout(3000)
                     .get();

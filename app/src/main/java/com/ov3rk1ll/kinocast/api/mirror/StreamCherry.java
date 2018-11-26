@@ -38,7 +38,6 @@ public class StreamCherry extends Host {
     public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
         if(TextUtils.isEmpty(url)) return null;
 
-        url = "https:" + url;
         queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_getdatafrom, url));
 
         Log.d(TAG, "resolve " + url);
