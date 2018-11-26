@@ -14,8 +14,6 @@ import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.ui.MainActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.nodes.Document;
-
 public class StreamCherry extends Host {
     private static final String TAG = StreamCherry.class.getSimpleName();
     public static final int HOST_ID = 82;
@@ -34,19 +32,6 @@ public class StreamCherry extends Host {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-
-    public static String getMirrorLink(Document doc){
-        try {
-
-            String href = doc.select("iframe").attr("src");
-
-            return href;
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return null;
     }
 
     @Override
@@ -114,7 +99,7 @@ public class StreamCherry extends Host {
                 break;
         }
 
-        if(solvedUrl[0].equalsIgnoreCase("https:null")) return null;
+        if(Utils.isStringEmpty(solvedUrl[0])) return null;
         return solvedUrl[0];
 
     }

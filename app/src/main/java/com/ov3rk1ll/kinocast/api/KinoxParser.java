@@ -275,13 +275,7 @@ public class KinoxParser extends Parser{
             queryTask.updateProgress("Get host from " + URL_BASE + url);
             JSONObject json = getJson(URL_BASE + url);
             Document doc = Jsoup.parse(json != null ? json.getString("Stream") : null);
-
-            if (getLink == null){
-                //fallback to old
-                href = doc.select("a").attr("href");
-            } else {
-                href = (String) getLink.invoke(null, doc);
-            }
+            href = host.getMirrorLink(doc);
 
             queryTask.updateProgress("Get video from " + href);
             return href;

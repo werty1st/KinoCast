@@ -83,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
             Preference donate = findPreference("donate");
-            if (Utils.StringIsEmpty(getString(R.string.paypal_donate))) {
+            if (Utils.isStringEmpty(getString(R.string.paypal_donate))) {
                 PreferenceScreen pscreen = getPreferenceScreen();
                 pscreen.removePreference(donate);
             } else {

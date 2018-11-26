@@ -16,18 +16,6 @@ public class Vidlox extends Host {
     private static final String TAG = Vidlox.class.getSimpleName();
     public static final int HOST_ID = 74;
 
-    public static String getMirrorLink(Document doc){
-        try {
-
-            String href = doc.select("a").attr("href");
-
-            return href;
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
-        return null;
-    }
-
     @Override
     public int getId() {
         return HOST_ID;

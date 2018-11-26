@@ -1,6 +1,10 @@
 package com.ov3rk1ll.kinocast.api.mirror;
 
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
+import com.ov3rk1ll.kinocast.utils.Utils;
+
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,11 +26,11 @@ public abstract class Host {
             Vidlox.class
     };
 
-    public static Host selectById(int id){
-        for (Class<?> h: HOSTER_LIST) {
+    public static Host selectById(int id) {
+        for (Class<?> h : HOSTER_LIST) {
             try {
                 Host host = (Host) h.getConstructor().newInstance();
-                if(host.getId() == id){
+                if (host.getId() == id) {
                     return host;
                 }
             } catch (InstantiationException e) {
@@ -42,19 +46,20 @@ public abstract class Host {
         return null;
     }
 
-    public Host(){
+    public Host() {
 
     }
 
-    public Host(int mirror){
+    public Host(int mirror) {
         this.mirror = mirror;
     }
 
-    public boolean isEnabled(){
+    public boolean isEnabled() {
         return false;
     }
 
     public abstract int getId();
+
     public abstract String getName();
 
     public int getMirror() {
@@ -73,7 +78,26 @@ public abstract class Host {
         this.url = url;
     }
 
-    public String getVideoPath(DetailActivity.QueryPlayTask queryTask){
+    public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
+        return null;
+    }
+
+    public String getMirrorLink(Document doc) {
+        try {
+            String href = null;
+            Elements elem = doc.select("iframe");
+            if (elem != null) {
+                href = elem.attr("src");
+            if(Utils.isStringEmpty(href))
+                elem = doc.select("a");
+                if (elem != null) {
+                    href = elem.attr("href");
+                }
+            }
+            return Utils.getUrl(href);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
         return null;
     }
 

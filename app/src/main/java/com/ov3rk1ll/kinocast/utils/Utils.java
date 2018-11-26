@@ -25,7 +25,7 @@ import okhttp3.Response;
 public class Utils {
     public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
 
-    public static boolean StringIsEmpty(String val) {
+    public static boolean isStringEmpty(String val) {
         if (val == null) return true;
         if (val.isEmpty()) return true;
         if (val.equalsIgnoreCase("null")) return true;
@@ -35,10 +35,12 @@ public class Utils {
         if (val.equalsIgnoreCase("http://null")) return true;
         return false;
     }
+
     public static String getUrl(String url) {
-        if(url.startsWith("//")) return "https:" + url;
+        if (url != null && url.startsWith("//")) return "https:" + url;
         return url;
     }
+
     public static String getRedirectTarget(String url) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .followRedirects(false)
