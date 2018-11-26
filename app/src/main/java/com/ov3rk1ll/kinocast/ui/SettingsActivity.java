@@ -10,6 +10,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import com.ov3rk1ll.kinocast.BuildConfig;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
+import com.ov3rk1ll.kinocast.utils.Utils;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -80,15 +82,20 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-
-            findPreference("donate").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.paypal_donate)));
-                    startActivity(intent);
-                    return true;
-                }
-            });
+            Preference donate = findPreference("donate");
+            if (Utils.StringIsEmpty(getString(R.string.paypal_donate))) {
+                PreferenceScreen pscreen = getPreferenceScreen();
+                pscreen.removePreference(donate);
+            } else {
+                donate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.paypal_donate)));
+                        startActivity(intent);
+                        return true;
+                    }
+                });
+            }
 
             bindPreferenceSummaryToValue(findPreference("url"));
             findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {

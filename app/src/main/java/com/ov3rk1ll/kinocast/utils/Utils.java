@@ -25,7 +25,21 @@ import okhttp3.Response;
 public class Utils {
     public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
 
-    public static String getRedirectTarget(String url){
+    public static boolean StringIsEmpty(String val) {
+        if (val == null) return true;
+        if (val.isEmpty()) return true;
+        if (val.equalsIgnoreCase("null")) return true;
+        if (val.equalsIgnoreCase("http:null")) return true;
+        if (val.equalsIgnoreCase("https:null")) return true;
+        if (val.equalsIgnoreCase("https://null")) return true;
+        if (val.equalsIgnoreCase("http://null")) return true;
+        return false;
+    }
+    public static String getUrl(String url) {
+        if(url.startsWith("//")) return "https:" + url;
+        return url;
+    }
+    public static String getRedirectTarget(String url) {
         OkHttpClient client = new OkHttpClient.Builder()
                 .followRedirects(false)
                 .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
@@ -64,12 +78,12 @@ public class Utils {
         return ((netInfo != null) && netInfo.isConnected());
     }
 
-    public static SparseIntArray getWeightedHostList(Context context){
+    public static SparseIntArray getWeightedHostList(Context context) {
         SparseIntArray sparseArray = new SparseIntArray();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         int count = preferences.getInt("order_hostlist_count", -1);
-        if(count == -1) return null;
-        for(int i = 0; i < count; i++){
+        if (count == -1) return null;
+        for (int i = 0; i < count; i++) {
             int key = preferences.getInt("order_hostlist_" + i, i);
             sparseArray.put(key, i);
         }
@@ -82,16 +96,16 @@ public class Utils {
                 .enableCaptionManagement()
                 .enableWifiReconnection();
 
-        if(BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             builder.enableDebug();
         }
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if(preferences.getBoolean("chromecast_lock_screen", true)){
+        if (preferences.getBoolean("chromecast_lock_screen", true)) {
             builder.enableLockScreen();
         }
 
-        if(preferences.getBoolean("chromecast_notification", true)){
+        if (preferences.getBoolean("chromecast_notification", true)) {
             builder.enableNotification()
                     .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_PLAY_PAUSE, true)
                     .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_DISCONNECT, true);
