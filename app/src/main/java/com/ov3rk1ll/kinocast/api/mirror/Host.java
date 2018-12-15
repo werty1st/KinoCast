@@ -88,7 +88,8 @@ public abstract class Host {
             Elements elem = doc.select("iframe");
             if (elem != null) {
                 href = elem.attr("src");
-            if(Utils.isStringEmpty(href))
+            }
+            if (Utils.isStringEmpty(href)) {
                 elem = doc.select("a");
                 if (elem != null) {
                     href = elem.attr("href");
