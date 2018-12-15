@@ -11,7 +11,7 @@
     <string name="title_section6">Favoriten</string>
     <string name="title_section7">Einstellungen</string>
 
-    <string name="update_check">http://ov3rk1ll.github.io/KinoCast/update2.json</string>
+    <string name="update_check">https://kinoca.st/update2.json</string>
     <string name="update_checking">Prüfe auf Update...</string>
     <string name="update_uptodate">Du hast bereists die aktuelle Version installiert</string>
 
