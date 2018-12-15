@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
+import com.ov3rk1ll.kinocast.utils.Utils;
 
 
 public class TrackingApplication extends Application {
@@ -18,8 +19,13 @@ public class TrackingApplication extends Application {
         Parser.selectParser(this, preferences.getInt("parser", KinoxParser.PARSER_ID));
         Log.i("selectParser", "ID is " + Parser.getInstance().getParserId());
 
-
-
+        String flurry_key = getString(R.string.FLURRY_API_KEY);
+        if(!Utils.isStringEmpty(flurry_key)) {
+            new com.flurry.android.FlurryAgent.Builder()
+                    .withLogEnabled(true)
+                    .withCaptureUncaughtExceptions(true)
+                    .build(this, getString(R.string.FLURRY_API_KEY));
+        }
         super.onCreate();
     }
 }
