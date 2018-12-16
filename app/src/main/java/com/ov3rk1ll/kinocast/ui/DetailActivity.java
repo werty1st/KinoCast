@@ -701,7 +701,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
             Season s = item.getSeasons()[((Spinner) findViewById(R.id.spinnerSeason)).getSelectedItemPosition()];
             String e = s.episodes[((Spinner) findViewById(R.id.spinnerEpisode)).getSelectedItemPosition()];
             mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_TV_SHOW);
-            mediaMetadata.putString(MediaMetadata.KEY_TITLE, String.format("%s - Folge S%02dE%02d", item.getTitle(), s.id, e));
+            mediaMetadata.putString(MediaMetadata.KEY_TITLE, String.format("%s - Folge S%02dE%02d", item.getTitle(), s.id, Integer.parseInt(e));
         } else {
             mediaMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
             mediaMetadata.putString(MediaMetadata.KEY_TITLE, item.getTitle());
