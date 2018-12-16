@@ -485,13 +485,21 @@ public class WVersionManager {
                 Toast.makeText(context, "File downloaded", Toast.LENGTH_SHORT).show();
 
             //Open file
-            Intent intent = new Intent(Intent.ACTION_VIEW);
+            Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
             Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", localFile);
             Log.i(TAG, "onPostExecute: open " + uri);
             // Uri.fromFile(localFile)
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            context.startActivity(intent);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            //context.startActivity(intent);
+            Intent chooser = Intent.createChooser(intent, "Chooser");
+
+            // Verify the intent will resolve to at least one activity
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(chooser);
+            }
+
         }
     }
 
