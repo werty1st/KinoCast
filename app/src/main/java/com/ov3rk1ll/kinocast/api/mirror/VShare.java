@@ -52,6 +52,7 @@ public class VShare extends Host {
                 Document doc = Jsoup.connect(url)
                         .userAgent(Utils.USER_AGENT)
                         .timeout(3000)
+                        .validateTLSCertificates(false)
                         .get();
                 String fname = doc.select("input[name=fname]").attr("value");
                 Log.d(TAG, "FName " + fname);
@@ -100,6 +101,7 @@ public class VShare extends Host {
                     .data("hash", "")
                     .userAgent(Utils.USER_AGENT)
                     .timeout(3000)
+                    .validateTLSCertificates(false)
                     .post();
 
             return doc.select("source[type=video/mp4]").attr("src");
