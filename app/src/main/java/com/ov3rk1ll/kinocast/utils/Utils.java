@@ -15,9 +15,10 @@ import com.ov3rk1ll.kinocast.BuildConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ import okhttp3.Response;
 
 public class Utils {
     public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
+    public static boolean DisableSSLCheck = false;
 
     public static boolean isStringEmpty(String val) {
         if (val == null) return true;
@@ -101,6 +103,13 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Connection buildJsoup(String url) {
+        return Jsoup.connect(url)
+                .validateTLSCertificates(!DisableSSLCheck)
+                .userAgent(Utils.USER_AGENT)
+                .timeout(3000);
     }
 
     @SuppressWarnings("deprecation")

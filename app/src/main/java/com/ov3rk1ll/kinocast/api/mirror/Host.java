@@ -1,21 +1,14 @@
 package com.ov3rk1ll.kinocast.api.mirror;
 
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
-import com.ov3rk1ll.kinocast.utils.Utils;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.lang.reflect.InvocationTargetException;
 
 public abstract class Host {
     protected int mirror;
     protected String url;
+    protected String urlVideo;
     protected String slug;
-
-    public static boolean DisableSSLCheck = false;
 
     public static Class<?>[] HOSTER_LIST = {
             DivxStage.class,
@@ -83,7 +76,15 @@ public abstract class Host {
     public void setUrl(String url) {
         this.url = url;
     }
-    
+
+    public String getVideoUrl() {
+        return urlVideo;
+    }
+
+    public void setVideoUrl(String url) {
+        this.urlVideo = url;
+    }
+
     public String getSlug() {
         return slug;
     }
@@ -91,39 +92,13 @@ public abstract class Host {
     public void setSlug(String slug) {
         this.slug = slug;
     }
-    public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
-        return null;
-    }
 
-    public String getMirrorLink(Document doc) {
-        try {
-            String href = null;
-            Elements elem = doc.select("iframe");
-            if (elem != null) {
-                href = elem.attr("src");
-            }
-            if (Utils.isStringEmpty(href)) {
-                elem = doc.select("a");
-                if (elem != null) {
-                    href = elem.attr("href");
-                }
-            }
-            return Utils.getUrl(href);
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+    public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
         return null;
     }
 
     @Override
     public String toString() {
         return getName() + " #" + mirror;
-    }
-
-    public static Connection buildJsoup(String url) {
-        return Jsoup.connect(url)
-                .validateTLSCertificates(!DisableSSLCheck)
-                .userAgent(Utils.USER_AGENT)
-                .timeout(3000);
     }
 }

@@ -6,7 +6,6 @@ import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class NowVideo extends Host {
@@ -34,7 +33,7 @@ public class NowVideo extends Host {
         try {
             String id = url.substring(url.lastIndexOf("/") + 1);
             queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_getvideoforid, id));
-            Document doc = Host.buildJsoup("http://www.nowvideo.sx/mobile/video.php?id=" + id)
+            Document doc = Utils.buildJsoup("http://www.nowvideo.sx/mobile/video.php?id=" + id)
                     .get();
 
             return doc.select("source[type=video/mp4]").attr("src");

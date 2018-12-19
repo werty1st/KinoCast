@@ -1,7 +1,6 @@
 package com.ov3rk1ll.kinocast.api;
 
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -13,18 +12,14 @@ import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.api.mirror.SharedSx;
 import com.ov3rk1ll.kinocast.api.mirror.Sockshare;
 import com.ov3rk1ll.kinocast.api.mirror.StreamCloud;
-import com.ov3rk1ll.kinocast.data.Season;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class MyKinoParser extends Parser {
     public static final int PARSER_ID = 4;
@@ -245,33 +239,6 @@ public class MyKinoParser extends Parser {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    private String getMirrorLink(DetailActivity.QueryPlayTask queryTask, Host host, String url) {
-
-        String href = "";
-        Method getLink = null;
-
-        try {
-            getLink = host.getClass().getMethod("getMirrorLink", Document.class);
-        } catch (NoSuchMethodException e) {
-            //not implemented
-            //i'm not a java developer so i didn't want to change much of the code
-        }
-
-        try {
-            queryTask.updateProgress("Get host from " + URL_BASE + url);
-            JSONObject json = getJson(URL_BASE + url);
-            Document doc = Jsoup.parse(json != null ? json.getString("Stream") : null);
-            href = host.getMirrorLink(doc);
-
-            queryTask.updateProgress("Get video from " + href);
-            return href;
-        } catch (Exception e1) {
-            e1.printStackTrace();
         }
         return null;
     }

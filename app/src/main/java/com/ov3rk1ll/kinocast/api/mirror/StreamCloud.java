@@ -8,7 +8,6 @@ import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -68,7 +67,7 @@ public class StreamCloud extends Host {
             // op=download1&usr_login=&id=kp95f217fxwr&fname=Bones.S01E01.DVDRip.XviD-TOPAZ.avi
             // &referer=http%3A%2F%2Fwww.kinox.to%2FStream%2FBones.html
             // &hash=&imhuman=Weiter+zum+Video
-            Document doc = Host.buildJsoup(url)
+            Document doc = Utils.buildJsoup(url)
                     .data("op", "download1")
                     .data("id", id)
                     .data("fname", fname)

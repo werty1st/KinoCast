@@ -11,6 +11,7 @@ import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.data.Season;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
+import com.ov3rk1ll.kinocast.utils.Utils;
 
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -276,10 +277,30 @@ public class KinoxParser extends Parser{
             queryTask.updateProgress("Get host from " + URL_BASE + url);
             JSONObject json = getJson(URL_BASE + url);
             Document doc = Jsoup.parse(json != null ? json.getString("Stream") : null);
-            href = host.getMirrorLink(doc);
+            href = getMirrorLink(doc);
 
             queryTask.updateProgress("Get video from " + href);
             return href;
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getMirrorLink(Document doc) {
+        try {
+            String href = null;
+            Elements elem = doc.select("iframe");
+            if (elem != null) {
+                href = elem.attr("src");
+            }
+            if (Utils.isStringEmpty(href)) {
+                elem = doc.select("a");
+                if (elem != null) {
+                    href = elem.attr("href");
+                }
+            }
+            return Utils.getUrl(href);
         } catch (Exception e1) {
             e1.printStackTrace();
         }

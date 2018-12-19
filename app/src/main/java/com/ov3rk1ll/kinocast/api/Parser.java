@@ -8,7 +8,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Toast;
 
-import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;

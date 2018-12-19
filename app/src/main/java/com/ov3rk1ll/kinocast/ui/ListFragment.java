@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,7 +25,6 @@ import com.ov3rk1ll.kinocast.ui.helper.layout.ResultRecyclerAdapter;
 import com.ov3rk1ll.kinocast.utils.BookmarkManager;
 import com.ov3rk1ll.kinocast.utils.ExceptionAsyncTask;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;

@@ -12,7 +12,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -24,16 +23,12 @@ import com.ov3rk1ll.kinocast.BuildConfig;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
-import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.utils.Utils;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import static com.ov3rk1ll.kinocast.api.Parser.PARSER_LIST;
 
@@ -144,7 +139,7 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference("allow_invalid_ssl").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
-                    Host.DisableSSLCheck = (boolean) o;
+                    Utils.DisableSSLCheck = (boolean) o;
                     return true;
                 }
             });

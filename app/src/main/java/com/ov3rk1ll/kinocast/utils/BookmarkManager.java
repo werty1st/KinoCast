@@ -1,12 +1,7 @@
 package com.ov3rk1ll.kinocast.utils;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.ov3rk1ll.kinocast.api.Parser;

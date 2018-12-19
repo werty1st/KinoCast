@@ -6,7 +6,6 @@ import android.util.Log;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.util.regex.Matcher;
@@ -40,7 +39,7 @@ public class Vidlox extends Host {
         if(TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
-            Document doc = Host.buildJsoup(url)
+            Document doc = Utils.buildJsoup(url)
                     .get();
 
             Matcher m = regexMp4.matcher(doc.html());

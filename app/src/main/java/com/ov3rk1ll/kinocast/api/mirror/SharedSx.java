@@ -8,7 +8,6 @@ import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -39,7 +38,7 @@ public class SharedSx extends Host {
         Log.d(TAG, "resolve " + url);
         queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_getdatafrom, url));
         try {
-            Document doc = Host.buildJsoup(url)
+            Document doc = Utils.buildJsoup(url)
                     .get();
 
             String hash = doc.select("form > input[name=hash]").val();
@@ -53,7 +52,7 @@ public class SharedSx extends Host {
 
             Log.d(TAG, "Send data [hash: " + hash + ", expires: " + expires + ", timestamp: " + timestamp + "]");
             queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_senddatato, url));
-            doc = Host.buildJsoup(url)
+            doc = Utils.buildJsoup(url)
                     .data("hash", hash)
                     .data("expires", expires)
                     .data("timestamp", timestamp)

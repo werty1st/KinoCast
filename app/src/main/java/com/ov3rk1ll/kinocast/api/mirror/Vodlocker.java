@@ -59,7 +59,7 @@ public class Vodlocker extends Host {
     private String getLink(String id, String fname, String hash){
         try {
             Log.d(TAG, "POST " + url + " w/ " + id + ", " + fname + ", " + hash);
-            Document doc = Host.buildJsoup(url)
+            Document doc = Utils.buildJsoup(url)
                     .data("op", "download1")
                     .data("id", id)
                     .data("fname", fname)

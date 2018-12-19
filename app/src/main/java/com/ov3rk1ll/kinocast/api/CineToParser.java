@@ -3,7 +3,6 @@ package com.ov3rk1ll.kinocast.api;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -18,18 +17,15 @@ import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.api.mirror.Streamango;
-import com.ov3rk1ll.kinocast.data.Season;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.ui.MainActivity;
-import com.ov3rk1ll.kinocast.utils.InjectedCookieJar;
 import com.ov3rk1ll.kinocast.utils.Recaptcha;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -43,13 +39,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import okhttp3.Cookie;
 
 public class CineToParser extends Parser {
     public static final int PARSER_ID = 2;

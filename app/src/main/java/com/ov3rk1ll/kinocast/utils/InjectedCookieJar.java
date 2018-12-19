@@ -14,8 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.Cookie;
-import okhttp3.CookieJar;
-import okhttp3.HttpUrl;
 
 public class InjectedCookieJar extends PersistentCookieJar {
     private  CookieCache ccache;

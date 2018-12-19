@@ -3,11 +3,9 @@ package com.ov3rk1ll.kinocast.api.mirror;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class Vidoza extends Host {
@@ -36,7 +34,7 @@ public class Vidoza extends Host {
         if(TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
-            Document doc = Host.buildJsoup(url)
+            Document doc = Utils.buildJsoup(url)
                     .get();
 
             return doc.select("source[type=video/mp4]").attr("src");
