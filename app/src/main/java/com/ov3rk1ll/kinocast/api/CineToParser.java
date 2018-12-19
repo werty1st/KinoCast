@@ -156,7 +156,7 @@ public class CineToParser extends Parser {
         data.put("year[0]", "1902");
         data.put("year[1]", Integer.toString(Calendar.getInstance().get(Calendar.YEAR)));
         data.put("term", term);
-        data.put("language", "2");
+        data.put("language", lang);
         data.put("page", "1");
         data.put("count", "25");
 
@@ -274,7 +274,6 @@ public class CineToParser extends Parser {
                     cookieSyncMngr.sync();
 
                     webView.setVisibility(View.GONE);
-                    webView.clearCache(true);
                     webView.getSettings().setUserAgentString(Utils.USER_AGENT);
                     webView.getSettings().setJavaScriptEnabled(true);
                     webView.setWebViewClient(new WebViewClient() {
@@ -324,7 +323,7 @@ public class CineToParser extends Parser {
                 }
             });
 
-            timeout = 50;
+            timeout = 30;
             // Wait for the webView to load the correct url
             while (!requestDone[0]) {
                 SystemClock.sleep(100);
@@ -385,13 +384,13 @@ public class CineToParser extends Parser {
 
     @Override
     public String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, Host host, int season, String episode) {
-        return getMirrorLink(queryTask, host, "aGET/Mirror/" + item.getSlug() + "&Hoster=" + host.getId() + "&Mirror=" + host.getMirror() + "&Season=" + season + "&Episode=" + episode);
+        return getMirrorLink(queryTask, host, host.getSlug());
     }
 
     @SuppressWarnings("deprecation")
     @Override
     public String[] getSearchSuggestions(String query) {
-        String url = URL_BASE + "aGET/Suggestions/?q=" + URLEncoder.encode(query) + "&limit=10&timestamp=" + SystemClock.elapsedRealtime();
+        String url = KinoxParser.URL_DEFAULT + "aGET/Suggestions/?q=" + URLEncoder.encode(query) + "&limit=10&timestamp=" + SystemClock.elapsedRealtime();
         String data = getBody(url);
         /*try {
             byte ptext[] = data.getBytes("ISO-8859-1");
@@ -415,22 +414,26 @@ public class CineToParser extends Parser {
     public String getSearchPage(String query) {
         term = query;
         rating = "1";
+        lang = "0";
         return URL_BASE + "search";
     }
 
     private String term = "";
+    private String lang = "0";
     private String rating = "1";
 
     @Override
     public String getCineMovies() {
         term="";
         rating = "1";
+        lang = "2";
         return URL_BASE + "search";
     }
 
     @Override
     public String getPopularMovies() {
         rating = "5";
+        lang = "0";
         return URL_BASE + "Popular-Movies.html";
     }
 
