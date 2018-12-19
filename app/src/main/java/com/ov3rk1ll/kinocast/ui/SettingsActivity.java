@@ -130,7 +130,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object o) {
 
                     //prevent app from crashing with empty url
-                    if ( !Patterns.WEB_URL.matcher(o.toString()).matches()){
+                    if (!o.toString().equalsIgnoreCase("") && !Patterns.WEB_URL.matcher(o.toString()).matches()){
                         Toast.makeText(getActivity(), "Invalid URL", Toast.LENGTH_SHORT).show();
                         return false;
                     }
