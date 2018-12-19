@@ -208,9 +208,6 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
             findViewById(R.id.donateView).setVisibility(View.GONE);
             String mAdSpaceName = "Detail Banner";
 
-
-            //mAdView.setInventoryHash(getString(R.string.mobfox_hash));
-            //mAdView.load();
         } else {
             mAdView.setVisibility(View.GONE);
             findViewById(R.id.donateView).setVisibility(View.GONE);
@@ -312,7 +309,6 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     private void initInstances() {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        //getSupportActionBar().setTitle(item.getTitle());
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
         collapsingToolbarLayout.setTitle(item.getTitle());
@@ -601,19 +597,23 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         @Override
         protected String doInBackground(Void... params) {
             String video = host.getVideoUrl();
-            String link = host.getUrl();
-            if(link == null || link.isEmpty()){
-                if (item.getType() == ViewModel.Type.SERIES) {
-                    Season s = item.getSeasons()[spinnerSeasonItemPosition];
-                    String e = s.episodes[spinnerEpisodeItemPosition];
-                    link = Parser.getInstance().getMirrorLink(this, item, host, s.id, e);
-                } else {
-                    link = Parser.getInstance().getMirrorLink(this, item, host);
-                }
-                host.setUrl(link);
-            }
+            if(video == null || video.isEmpty()) {
 
-            return host.getVideoPath(this);
+                String link = host.getUrl();
+                if (link == null || link.isEmpty()) {
+                    if (item.getType() == ViewModel.Type.SERIES) {
+                        Season s = item.getSeasons()[spinnerSeasonItemPosition];
+                        String e = s.episodes[spinnerEpisodeItemPosition];
+                        link = Parser.getInstance().getMirrorLink(this, item, host, s.id, e);
+                    } else {
+                        link = Parser.getInstance().getMirrorLink(this, item, host);
+                    }
+                    host.setUrl(link);
+                }
+                video = host.getVideoPath(this);
+                host.setVideoUrl(video);
+            }
+            return video;
         }
 
         @Override
