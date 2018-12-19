@@ -201,7 +201,6 @@ public class KinoxParser extends Parser{
             model.setSlug(url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf(".")));
             model.setTitle(doc.select("h1 > span:eq(0)").text());
             model.setSummary(doc.select("div.Descriptore").text());
-            model.setImage(URL_BASE + doc.select("div.Grahpics img").attr("src"));
             String ln = doc.select("div.Flag > img").attr("src");
             ln = ln.substring(ln.lastIndexOf("/") + 1);
             ln = ln.substring(0, ln.indexOf("."));
