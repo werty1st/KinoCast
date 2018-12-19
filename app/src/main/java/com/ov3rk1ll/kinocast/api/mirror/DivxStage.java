@@ -26,7 +26,7 @@ public class DivxStage extends Host {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return false;
     }
 
     @Override

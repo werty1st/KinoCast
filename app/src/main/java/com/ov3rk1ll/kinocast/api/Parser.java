@@ -43,6 +43,7 @@ public abstract class Parser {
     public static Class<?>[] PARSER_LIST = {
             KinoxParser.class,
             //Movie4kParser.class,
+            MyKinoParser.class,
             CineToParser.class
     };
 

@@ -28,7 +28,8 @@ public abstract class Host {
             Streamango.class,
             Vidoza.class,
             VShare.class,
-            Vidlox.class
+            Vidlox.class,
+            Direct.class
     };
 
     public static Host selectById(int id) {
