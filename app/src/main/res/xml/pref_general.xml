@@ -2,12 +2,12 @@
 
     <ListPreference
         android:key="parser"
-        android:title="Parser"
+        android:title="Parser (Neustart erforderlich)"
         android:defaultValue="0"
         />
     <EditTextPreference
         android:key="url"
-        android:title="Parser URL (Neustart erforderlich)"
+        android:title="Parser URL"
         android:defaultValue=""
         android:singleLine="true"
         android:selectAllOnFocus="true"

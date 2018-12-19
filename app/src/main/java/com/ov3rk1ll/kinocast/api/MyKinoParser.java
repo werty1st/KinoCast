@@ -159,7 +159,7 @@ public class MyKinoParser extends Parser{
                 }
             }
         }
-        
+
         model.setMirrors(hostlist.toArray(new Host[hostlist.size()]));
         return model;
     }
@@ -297,7 +297,7 @@ public class MyKinoParser extends Parser{
 
     @Override
     public String getCineMovies(){
-        return URL_BASE + "aktuelle-kinofilme/";
+        return URL_BASE + "xfsearch/2018";
     }
 
     @Override
@@ -307,7 +307,7 @@ public class MyKinoParser extends Parser{
 
     @Override
     public String getLatestMovies(){
-        return URL_BASE + "filme/";
+        return URL_BASE + "xfsearch/2018";
     }
 
     @Override
