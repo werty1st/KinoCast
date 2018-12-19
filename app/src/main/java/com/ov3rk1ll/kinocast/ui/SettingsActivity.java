@@ -135,7 +135,7 @@ public class SettingsActivity extends AppCompatActivity {
                         return false;
                     }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    Parser.selectParser(getActivity(), preferences.getInt("parser", KinoxParser.PARSER_ID), o.toString());
+                    Parser.selectParser(getActivity(), Integer.parseInt(preferences.getString("parser", Integer.toString(KinoxParser.PARSER_ID))), o.toString());
                     preference.setSummary(o.toString());
                     return true;
                 }
