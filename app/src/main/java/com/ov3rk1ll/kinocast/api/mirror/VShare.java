@@ -90,7 +90,7 @@ public class VShare extends Host {
             // op=download1&usr_login=&id=kp95f217fxwr&fname=Bones.S01E01.DVDRip.XviD-TOPAZ.avi
             // &referer=http%3A%2F%2Fwww.kinox.to%2FStream%2FBones.html
             // &hash=&imhuman=Weiter+zum+Video
-            Document doc = Jsoup.connect(url)
+            Document doc = Host.buildJsoup(url)
                     .data("op", "download1")
                     .data("id", id)
                     .data("fname", fname)
@@ -98,8 +98,6 @@ public class VShare extends Host {
                     .data("usr_login", "")
                     .data("referer", "") // http://www.kinox.to
                     .data("hash", "")
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
                     .post();
 
             return doc.select("source[type=video/mp4]").attr("src");

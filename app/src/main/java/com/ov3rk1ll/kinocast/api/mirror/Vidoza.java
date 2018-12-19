@@ -36,9 +36,7 @@ public class Vidoza extends Host {
         if(TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
-            Document doc = Jsoup.connect(url)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
+            Document doc = Host.buildJsoup(url)
                     .get();
 
             return doc.select("source[type=video/mp4]").attr("src");

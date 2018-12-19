@@ -3,6 +3,8 @@ package com.ov3rk1ll.kinocast.api.mirror;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
@@ -11,6 +13,9 @@ import java.lang.reflect.InvocationTargetException;
 public abstract class Host {
     protected int mirror;
     protected String url;
+    protected String slug;
+
+    public static boolean DisableSSLCheck = false;
 
     public static Class<?>[] HOSTER_LIST = {
             DivxStage.class,
@@ -77,7 +82,14 @@ public abstract class Host {
     public void setUrl(String url) {
         this.url = url;
     }
+    
+    public String getSlug() {
+        return slug;
+    }
 
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
     public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
         return null;
     }
@@ -105,5 +117,12 @@ public abstract class Host {
     @Override
     public String toString() {
         return getName() + " #" + mirror;
+    }
+
+    public static Connection buildJsoup(String url) {
+        return Jsoup.connect(url)
+                .validateTLSCertificates(!DisableSSLCheck)
+                .userAgent(Utils.USER_AGENT)
+                .timeout(3000);
     }
 }

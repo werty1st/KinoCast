@@ -94,4 +94,7 @@ dependencies {
     implementation 'dnsjava:dnsjava:2.1.8'
     implementation 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+
+    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+
 }

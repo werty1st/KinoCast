@@ -1,5 +1,8 @@
 package com.ov3rk1ll.kinocast.api;
 
+import android.net.Uri;
+import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.ov3rk1ll.kinocast.R;
@@ -15,11 +18,13 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Movie4kParser extends Parser{
     public static final int PARSER_ID = 1;
-    public static final String URL_BASE = "https://movie4k.io/";
+    public static final String URL_DEFAULT = "https://movie4k.to/";
 
     private static final SparseArray<Integer> languageResMap = new SparseArray<Integer>();
     private static final SparseArray<String> languageKeyMap = new SparseArray<String>();
@@ -44,8 +49,9 @@ public class Movie4kParser extends Parser{
         languageResMap.put(26, R.drawable.lang_hi); languageKeyMap.put(26, "hi");
     }
 
-    public Movie4kParser(String url) {
-        super(url);
+    @Override
+    public String getDefaultUrl() {
+        return URL_DEFAULT;
     }
 
     @Override
@@ -65,29 +71,27 @@ public class Movie4kParser extends Parser{
             ViewModel model = new ViewModel();
 
             Elements divs = file.select("div");
-            Element data = divs.get(2);
+            Element data = divs.get(3);
             model.setSlug(data.select("h2 > a").attr("href"));
             model.setTitle(data.select("h2 > a").text());
-
-            Element more = file.select("div.beschreibung").first();
+            model.setSummary(file.select("div.info").text());
+            String imdb = file.select("div.beschreibung a[href*=imdb]").attr("href").trim();
+            if(!TextUtils.isEmpty(imdb)){
+                Uri uri = Uri.parse(imdb);
+                model.setImdbId(uri.getLastPathSegment());
+            }
+            list.add(model);
         }
         //TODO
         return list;
     }
 
     @Override
-    public List<ViewModel> parseList(String url){
-        try {
-            Document doc = Jsoup.connect(url)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(10000)
-                    .get();
-
-            return parseList(doc);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public List<ViewModel> parseList(String url) throws IOException {
+        Log.i("Parser", "parseList: " + url);
+        Map<String, String> cookies = new HashMap<>();
+        Document doc = getDocument(url);
+        return parseList(doc);
     }
 
     private ViewModel parseDetail(Document doc, ViewModel item){
@@ -159,7 +163,7 @@ public class Movie4kParser extends Parser{
 
     @Override
     public String getCineMovies(){
-        return URL_BASE + "index.php";
+        return URL_BASE ;
     }
 
     @Override

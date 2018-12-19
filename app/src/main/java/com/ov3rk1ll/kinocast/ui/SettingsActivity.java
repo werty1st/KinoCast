@@ -12,6 +12,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -23,8 +24,18 @@ import com.ov3rk1ll.kinocast.BuildConfig;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
+import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.utils.Utils;
 import com.winsontan520.wversionmanager.library.WVersionManager;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
+import static com.ov3rk1ll.kinocast.api.Parser.PARSER_LIST;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -97,6 +108,22 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
 
+            ListPreference parser = (ListPreference)findPreference("parser");
+            List<CharSequence> eT = new ArrayList<>();
+            List<CharSequence> eV = new ArrayList<>();
+            for (Class<?> h : PARSER_LIST) {
+                try {
+                    Parser pi = (Parser) h.getConstructor().newInstance();
+                    eT.add(pi.getParserName());
+                    eV.add(Integer.toString(pi.getParserId()));
+                } catch (java.lang.InstantiationException | IllegalAccessException | InvocationTargetException  | NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            }
+            parser.setEntries(eT.toArray(new CharSequence[0]));
+            parser.setEntryValues(eV.toArray(new CharSequence[0]));
+            bindPreferenceSummaryToValue(parser);
+
             bindPreferenceSummaryToValue(findPreference("url"));
             findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -114,6 +141,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            findPreference("allow_invalid_ssl").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    Host.DisableSSLCheck = (boolean) o;
+                    return true;
+                }
+            });
             // Add 'notifications' preferences, and a corresponding header.
         /*PreferenceCategory fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_notifications);

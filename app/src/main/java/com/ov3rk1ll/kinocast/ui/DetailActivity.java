@@ -95,6 +95,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
 
     private static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 2;
+    public static DetailActivity activity = null;
 
     @Override
     public void onBackPressed() {
@@ -165,7 +166,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        activity = this;
 
         if (BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
         mVideoCastManager = Utils.initializeCastManager(this);
@@ -692,6 +693,9 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
 
         public Context getContext() {
             return context;
+        }
+        public ProgressDialog getDialog() {
+            return progressDialog;
         }
     }
 

@@ -24,6 +24,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,50 +37,70 @@ public abstract class Parser {
     private static final String TAG = Parser.class.getSimpleName();
     private static final int PARSER_ID = -1;
     String URL_BASE;
-    private static  OkHttpClient client;
+    private static OkHttpClient client;
     private static InjectedCookieJar injectedCookieJar;
 
+    public static Class<?>[] PARSER_LIST = {
+            KinoxParser.class,
+            //Movie4kParser.class,
+            CineToParser.class
+    };
+
     private static Parser instance;
-    public static Parser getInstance(){
+
+    public static Parser getInstance() {
         return instance;
     }
 
-    public static void selectParser(Context context, int id){
+    public static void selectParser(Context context, int id) {
         instance = selectByParserId(context, id);
         initHttpClient(context);
     }
-    public static void selectParser(Context context, int id, String url){
+
+    public static void selectParser(Context context, int id, String url) {
         instance = selectByParserId(id, url);
         initHttpClient(context);
     }
-    public static Parser selectByParserId(Context context, int id){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String url = preferences.getString("url", context.getString(R.string.defaul_url));
 
+    public static Parser selectByParserId(Context context, int id) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String url = preferences.getString("url", "");
         //prevent app from crashing with empty url
-        if ( !Patterns.WEB_URL.matcher(url).matches()){
-            url = context.getString(R.string.defaul_url);
+        if (!url.equalsIgnoreCase("") && !Patterns.WEB_URL.matcher(url).matches()) {
+            url = "";
             SharedPreferences.Editor prefEditor = preferences.edit();
             prefEditor.putString("url", url);
             prefEditor.commit();
-            Toast.makeText(context,"Resetting invalid URL to default", Toast.LENGTH_SHORT);
+            Toast.makeText(context, "Resetting invalid URL to default", Toast.LENGTH_SHORT);
         }
         return selectByParserId(id, url);
     }
-    private static Parser selectByParserId(int id, String url) {
-        if (!url.endsWith("/")) url = url + "/";
-        Log.i(TAG, "selectByParserId: load with #" + id + " for " + url);
-        switch (id) {
-            case KinoxParser.PARSER_ID:
-                return new KinoxParser(url);
-            //case Movie4kParser.PARSER_ID:
-            //    return new Movie4kParser(url);
+
+    public static Parser ParserById(int id) {
+        Parser def = null;
+        for (Class<?> h : PARSER_LIST) {
+            try {
+                Parser parser = (Parser) h.getConstructor().newInstance();
+                if(def ==null) def = parser;
+                if (parser.getParserId() == id) {
+                    return parser;
+                }
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return def;
     }
 
-    private static void initHttpClient(Context context){
-        injectedCookieJar = new InjectedCookieJar();
+    private static Parser selectByParserId(int id, String url) {
+        Parser p = ParserById(id);
+        if (p != null && !"".equals(url)) p.setUrl(url);
+        return p;
+    }
+
+
+    private static void initHttpClient(Context context) {
+        injectedCookieJar = InjectedCookieJar.Build(context);
         client = new OkHttpClient.Builder()
                 .followRedirects(false)
                 .followSslRedirects(false)
@@ -94,12 +115,12 @@ public abstract class Parser {
         return getDocument(url, null);
     }
 
-    Document getDocument(String url, Map<String, String> cookies) throws  IOException {
+    Document getDocument(String url, Map<String, String> cookies) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();
 
-        if(cookies != null) {
+        if (cookies != null) {
             for (String key : cookies.keySet()) {
                 injectedCookieJar.addCookie(new Cookie.Builder()
                         .domain(request.url().host())
@@ -110,11 +131,12 @@ public abstract class Parser {
             }
         }
         Response response = client.newCall(request).execute();
-        if(response.code() != 200){
+        String body = response.body().string();
+        if (response.code() != 200) {
+            Log.d(TAG, body);
             throw new IOException("Unexpected status code " + response.code());
         }
-        String body = response.body().string();
-        if(TextUtils.isEmpty(body)){
+        if (TextUtils.isEmpty(body)) {
             throw new IOException("Body for " + url + " is empty");
         }
         return Jsoup.parse(body);
@@ -143,11 +165,13 @@ public abstract class Parser {
         try {
             Response response = noFollowClient.newCall(request).execute();
             Log.i(TAG, "Got " + response.code() + " for " + url + ", cookies=" + noFollowClient.cookieJar().toString());
-            for(String key : response.headers().names()){
+            for (String key : response.headers().names()) {
                 Log.i(TAG, key + "=" + response.header(key));
             }
+            String body = response.body().string();
+            Log.d(TAG, body);
 
-            return response.body().string();
+            return body;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -169,15 +193,19 @@ public abstract class Parser {
         return null;
     }
 
+    public Parser() {
+        this.URL_BASE = getDefaultUrl();
+    }
+
     public Parser(String url) {
         this.URL_BASE = url;
     }
 
+    public abstract String getDefaultUrl();
+
     public abstract String getParserName();
 
-    public int getParserId(){
-        return PARSER_ID;
-    }
+    public abstract int getParserId();
 
     public abstract List<ViewModel> parseList(String url) throws IOException;
 
@@ -207,8 +235,12 @@ public abstract class Parser {
 
     public abstract String getLatestSeries();
 
-    public String getUrl(){
+    public String getUrl() {
         return URL_BASE;
+    }
+
+    public void setUrl(String url) {
+        URL_BASE = url;
     }
 
     @Override
@@ -216,7 +248,7 @@ public abstract class Parser {
         return getParserName();
     }
 
-    public OkHttpClient getClient(){
+    public OkHttpClient getClient() {
         return client;
     }
 

@@ -39,9 +39,7 @@ public class SharedSx extends Host {
         Log.d(TAG, "resolve " + url);
         queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_getdatafrom, url));
         try {
-            Document doc = Jsoup.connect(url)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
+            Document doc = Host.buildJsoup(url)
                     .get();
 
             String hash = doc.select("form > input[name=hash]").val();
@@ -55,12 +53,10 @@ public class SharedSx extends Host {
 
             Log.d(TAG, "Send data [hash: " + hash + ", expires: " + expires + ", timestamp: " + timestamp + "]");
             queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_senddatato, url));
-            doc = Jsoup.connect(url)
+            doc = Host.buildJsoup(url)
                     .data("hash", hash)
                     .data("expires", expires)
                     .data("timestamp", timestamp)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
                     .post();
 
             String link = doc.select("div.stream-content").attr("data-url");

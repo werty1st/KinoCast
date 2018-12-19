@@ -34,9 +34,7 @@ public class NowVideo extends Host {
         try {
             String id = url.substring(url.lastIndexOf("/") + 1);
             queryTask.updateProgress(queryTask.getContext().getString(R.string.host_progress_getvideoforid, id));
-            Document doc = Jsoup.connect("http://www.nowvideo.sx/mobile/video.php?id=" + id)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
+            Document doc = Host.buildJsoup("http://www.nowvideo.sx/mobile/video.php?id=" + id)
                     .get();
 
             return doc.select("source[type=video/mp4]").attr("src");

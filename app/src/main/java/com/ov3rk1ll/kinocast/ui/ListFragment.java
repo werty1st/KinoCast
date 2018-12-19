@@ -24,6 +24,7 @@ import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.helper.layout.GridLayoutManager;
 import com.ov3rk1ll.kinocast.ui.helper.layout.ResultRecyclerAdapter;
 import com.ov3rk1ll.kinocast.utils.BookmarkManager;
+import com.ov3rk1ll.kinocast.utils.ExceptionAsyncTask;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -156,8 +157,7 @@ public class ListFragment extends Fragment {
     }
 
     @SuppressWarnings("deprecation")
-    private class QueryPageTask extends AsyncTask<String, Void, ViewModel[]>{
-        Exception exception;
+    private class QueryPageTask extends ExceptionAsyncTask<String, Void, ViewModel[]>{
 
         @Override
         protected void onPreExecute() {
@@ -168,15 +168,9 @@ public class ListFragment extends Fragment {
         }
 
         @Override
-        protected ViewModel[] doInBackground(String... params) {
+        protected ViewModel[] doInBackground() throws Exception {
             List<ViewModel> list = null;
-            try {
-                list = Parser.getInstance().parseList(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-                exception = e;
-            }
-            if(list == null) return null;
+            list = Parser.getInstance().parseList(getParams()[0]);
             return list.toArray(new ViewModel[list.size()]);
         }
 
@@ -187,11 +181,12 @@ public class ListFragment extends Fragment {
                     adapter.add(m, adapter.getItemCount());
                 }
             }else{
+                getException().printStackTrace();
                 getActivity().findViewById(R.id.list).setVisibility(View.GONE);
                 ((TextView)getActivity().findViewById(R.id.text_error)).setText(
                         getString(R.string.connection_error_title) + "\n" +
                         getString(R.string.connection_error_message, Parser.getInstance().getUrl()) +
-                        "\n" + exception.getMessage()
+                        "\n" + getException().getMessage()
                 );
                 getActivity().findViewById(R.id.layout_error).setVisibility(View.VISIBLE);
             }
@@ -202,7 +197,7 @@ public class ListFragment extends Fragment {
     }
 
     @SuppressWarnings("deprecation")
-    private class QueryBookmarkTask extends AsyncTask<Context, Void, ViewModel[]>{
+    private class QueryBookmarkTask extends ExceptionAsyncTask<Context, Void, ViewModel[]>{
 
         @Override
         protected void onPreExecute() {
@@ -211,8 +206,8 @@ public class ListFragment extends Fragment {
         }
 
         @Override
-        protected ViewModel[] doInBackground(Context... params) {
-            AtomicReference<BookmarkManager> bookmarks = new AtomicReference<>(new BookmarkManager(params[0]));
+        protected ViewModel[] doInBackground() {
+            AtomicReference<BookmarkManager> bookmarks = new AtomicReference<>(new BookmarkManager(getParams()[0]));
             List<ViewModel> list = new ArrayList<>();
             for(int i = 0; i < bookmarks.get().size(); i++){
                 BookmarkManager.Bookmark b = bookmarks.get().get(i);

@@ -59,7 +59,7 @@ public class Vodlocker extends Host {
     private String getLink(String id, String fname, String hash){
         try {
             Log.d(TAG, "POST " + url + " w/ " + id + ", " + fname + ", " + hash);
-            Document doc = Jsoup.connect(url)
+            Document doc = Host.buildJsoup(url)
                     .data("op", "download1")
                     .data("id", id)
                     .data("fname", fname)
@@ -67,8 +67,6 @@ public class Vodlocker extends Host {
                     .data("usr_login", "")
                     .data("referer", "")
                     .data("hash", hash)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
                     .post();
             Pattern p = Pattern.compile("file: \\\"(.*)\\/v\\.mp4\\\",");
             Matcher m = p.matcher(doc.html());

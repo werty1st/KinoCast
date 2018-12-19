@@ -40,9 +40,7 @@ public class Vidlox extends Host {
         if(TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
-            Document doc = Jsoup.connect(url)
-                    .userAgent(Utils.USER_AGENT)
-                    .timeout(3000)
+            Document doc = Host.buildJsoup(url)
                     .get();
 
             Matcher m = regexMp4.matcher(doc.html());

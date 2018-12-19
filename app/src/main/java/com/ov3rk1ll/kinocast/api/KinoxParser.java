@@ -31,12 +31,13 @@ import java.util.Set;
 
 public class KinoxParser extends Parser{
     public static final int PARSER_ID = 0;
+    public static final String URL_DEFAULT = "https://kinos.to/";
 
     private static final SparseIntArray languageResMap = new SparseIntArray();
     private static final SparseArray<String> languageKeyMap = new SparseArray<>();
     static {
         languageResMap.put(1, R.drawable.lang_de); languageKeyMap.put(1, "de");
-        languageResMap.put(2, R.drawable.lang_en); languageKeyMap.put(2, "de");
+        languageResMap.put(2, R.drawable.lang_en); languageKeyMap.put(2, "en");
         languageResMap.put(4, R.drawable.lang_zh); languageKeyMap.put(4, "zh");
         languageResMap.put(5, R.drawable.lang_es); languageKeyMap.put(5, "es");
         languageResMap.put(6, R.drawable.lang_fr); languageKeyMap.put(6, "fr");
@@ -47,7 +48,7 @@ public class KinoxParser extends Parser{
         languageResMap.put(12, R.drawable.lang_hr); languageKeyMap.put(12, "hr");
         languageResMap.put(13, R.drawable.lang_sr); languageKeyMap.put(13, "sr");
         languageResMap.put(14, R.drawable.lang_bs); languageKeyMap.put(14, "bs");
-        languageResMap.put(15, R.drawable.lang_de_en); languageKeyMap.put(15, "en");
+        languageResMap.put(15, R.drawable.lang_de_en); languageKeyMap.put(15, "de");
         languageResMap.put(16, R.drawable.lang_nl); languageKeyMap.put(16, "nl");
         languageResMap.put(17, R.drawable.lang_ko); languageKeyMap.put(17, "ko");
         languageResMap.put(24, R.drawable.lang_el); languageKeyMap.put(24, "el");
@@ -55,8 +56,9 @@ public class KinoxParser extends Parser{
         languageResMap.put(26, R.drawable.lang_hi); languageKeyMap.put(26, "hi");
     }
 
-    KinoxParser(String url) {
-        super(url);
+    @Override
+    public String getDefaultUrl() {
+        return URL_DEFAULT;
     }
 
     @Override

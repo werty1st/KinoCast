@@ -1,39 +1,51 @@
 package com.ov3rk1ll.kinocast.utils;
 
+import android.content.Context;
+
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.CookieCache;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.CookiePersistor;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 
-public class InjectedCookieJar implements CookieJar {
-    private final List<Cookie> cookieStore = new ArrayList<>();
+public class InjectedCookieJar extends PersistentCookieJar {
+    private  CookieCache ccache;
+
+    private InjectedCookieJar(CookieCache cache, CookiePersistor persistor) {
+        super(cache, persistor);
+        ccache = cache;
+
+    }
+
+    public static InjectedCookieJar Build(Context context){
+        return new InjectedCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+    }
+
+    public Cookie[] toArray(){
+        List<Cookie> list = new ArrayList<>();
+        Iterator<Cookie> ic = ccache.iterator();
+        while(ic.hasNext()){
+            list.add(ic.next());
+        }
+        return list.toArray(new Cookie[list.size()]);
+    }
 
     @Override
     public String toString() {
-        return Arrays.toString(cookieStore.toArray());
+        return Arrays.toString(toArray());
     }
 
     public void addCookie(Cookie cookie){
-        // Check if we have that cookie so we can overwrite it
-        for(int i = 0; i < cookieStore.size(); i++){
-            if(cookieStore.get(i).name().equals(cookie.name())){
-                cookieStore.remove(i);
-                break;
-            }
-        }
-        cookieStore.add(cookie);
+        ccache.addAll(Arrays.asList(cookie));
     }
 
-    @Override
-    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-        cookieStore.addAll(cookies);
-    }
-
-    @Override
-    public List<Cookie> loadForRequest(HttpUrl url) {
-        return cookieStore;
-    }
 }

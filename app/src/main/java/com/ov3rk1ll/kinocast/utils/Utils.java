@@ -17,9 +17,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Utils {
@@ -65,7 +70,33 @@ public class Utils {
         Log.i("Utils", "read json from " + url);
         try {
             Response response = client.newCall(request).execute();
-            return new JSONObject(response.body().string());
+            String body = response.body().string();
+            return new JSONObject(body);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONObject readJson(String url, Set<Map.Entry<String,String>> postData) {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
+                .build();
+
+        MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        for (Map.Entry<String, String> pair: postData) {
+            bodyBuilder.addFormDataPart(pair.getKey(), pair.getValue());
+        }
+        RequestBody requestBody = bodyBuilder.build();
+
+        Request request = new Request.Builder().url(url).post(requestBody).build();
+
+        Log.i("Utils", "read json from " + url);
+        try {
+            Response response = client.newCall(request).execute();
+            String body = response.body().string();
+            return new JSONObject(body);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }

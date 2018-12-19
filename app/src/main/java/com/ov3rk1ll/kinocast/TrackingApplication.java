@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
+import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
 
@@ -16,7 +17,9 @@ public class TrackingApplication extends Application {
     public void onCreate() {
         //TODO Select Parser depending on settings
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Parser.selectParser(this, preferences.getInt("parser", KinoxParser.PARSER_ID));
+        String parser = preferences.getString("parser", Integer.toString(KinoxParser.PARSER_ID));
+        Host.DisableSSLCheck = preferences.getBoolean("allow_invalid_ssl",false);
+        Parser.selectParser(this, Integer.parseInt(parser));
         Log.i("selectParser", "ID is " + Parser.getInstance().getParserId());
 
         String flurry_key = getString(R.string.FLURRY_API_KEY);
