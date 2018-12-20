@@ -24,6 +24,7 @@ import com.ov3rk1ll.kinocast.ui.helper.layout.GridLayoutManager;
 import com.ov3rk1ll.kinocast.ui.helper.layout.ResultRecyclerAdapter;
 import com.ov3rk1ll.kinocast.utils.BookmarkManager;
 import com.ov3rk1ll.kinocast.utils.ExceptionAsyncTask;
+import com.ov3rk1ll.kinocast.utils.TheMovieDb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -174,8 +175,11 @@ public class ListFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ViewModel[] viewModels) {
+            TheMovieDb tmdbCache = new TheMovieDb(getActivity());
+
             if(viewModels != null){
                 for(ViewModel m: viewModels){
+                    Parser.getInstance().updateFromCache(tmdbCache, m);
                     adapter.add(m, adapter.getItemCount());
                 }
             }else{

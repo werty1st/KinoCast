@@ -40,24 +40,27 @@ public class OkHttpViewModelStreamFetcher implements DataFetcher<InputStream> {
     public InputStream loadData(Priority priority) throws Exception {
         GlideUrl url;
         //String cacheUrl = Parser.getInstance().getPageLink(model.getViewModel()) + "?size=" + model.getScreenWidthPx() + "&type=" + model.getType();
-        String cacheUrl = Parser.getInstance().getPageLink(model.getViewModel());
+        String cacheUrl = Parser.getInstance().getImdbLink(model.getViewModel());
 
-        String imageUrl = null;
-        try {
-            //Map<String, List<String>> para = Utils.splitHashQuery(new URL(cacheUrl));
-            JSONObject json = tmdbCache.get(cacheUrl);
-            if(json != null){
-                String type = model.getType();
-                String key = type + "_path";
-                int size = model.getScreenWidthPx();
-                if(type.equals("backdrop"))
-                    imageUrl = TheMovieDb.IMAGE_BASE_PATH + getBackdropSize(size) + json.getString(key);
-                else
-                    imageUrl = TheMovieDb.IMAGE_BASE_PATH + getPosterSize(size) + json.getString(key);
-
+        String imageUrl = model.getViewModel().getImage();
+        if(imageUrl == null || "".equalsIgnoreCase(imageUrl)){
+            try {
+                //Map<String, List<String>> para = Utils.splitHashQuery(new URL(cacheUrl));
+                JSONObject json = tmdbCache.get(cacheUrl);
+                if(json != null){
+                    String type = model.getType();
+                    String key = type + "_path";
+                    int size = model.getScreenWidthPx();
+                    if(type.equals("backdrop"))
+                        imageUrl = TheMovieDb.IMAGE_BASE_PATH + getBackdropSize(size) + json.getString(key);
+                    else
+                        imageUrl = TheMovieDb.IMAGE_BASE_PATH + getPosterSize(size) + json.getString(key);
+                }
+                model.getViewModel().setImage(imageUrl);
+                Parser.getInstance().updateFromCache(tmdbCache, model.getViewModel());
+            } catch(Exception e) {
+                e.printStackTrace();
             }
-        } catch(Exception e) {
-            e.printStackTrace();
         }
         url = new GlideUrl(imageUrl);
 

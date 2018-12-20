@@ -73,6 +73,8 @@ public class ResultRecyclerAdapter extends RecyclerView.Adapter<ResultRecyclerAd
                         holder.updatePalette(((GlideBitmapDrawable) resource.getCurrent()).getBitmap());
                         holder.image.setVisibility(View.VISIBLE);
                         holder.progressBar.setVisibility(View.GONE);
+                        holder.title.setText(item.getTitle());
+                        holder.rating.setRating(item.getRating() / 2.0f);
                         return false;
                     }
                 })

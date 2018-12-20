@@ -2,9 +2,10 @@ package com.ov3rk1ll.kinocast.api.mirror;
 
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 
-public abstract class Host {
+public abstract class Host implements Serializable {
     protected int mirror;
     protected String url;
     protected String urlVideo;

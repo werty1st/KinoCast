@@ -6,14 +6,18 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.utils.CloudflareDdosInterceptor;
 import com.ov3rk1ll.kinocast.utils.CustomDns;
 import com.ov3rk1ll.kinocast.utils.InjectedCookieJar;
+import com.ov3rk1ll.kinocast.utils.TheMovieDb;
 import com.ov3rk1ll.kinocast.utils.UserAgentInterceptor;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
@@ -43,7 +47,8 @@ public abstract class Parser {
             KinoxParser.class,
             //Movie4kParser.class,
             MyKinoParser.class,
-            CineToParser.class
+            CineToParser.class,
+            TVStreamsParser.class
     };
 
     private static Parser instance;
@@ -250,6 +255,61 @@ public abstract class Parser {
 
     public OkHttpClient getClient() {
         return client;
+    }
+
+
+    public void updateFromCache(TheMovieDb moviedb, ViewModel model){
+        JSONObject data = moviedb.get(Parser.getInstance().getImdbLink(model), false);
+        if(data == null) return;
+
+        if(model.getRating()==0) {
+            try {
+                model.setRating((float)data.getDouble("vote_average"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if("".equalsIgnoreCase(model.getTitle())) {
+            try {
+                model.setTitle(data.getString("title"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        if("".equalsIgnoreCase(model.getSummary())) {
+            try {
+                model.setSummary(data.getString("overview"));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getImdbLink(ViewModel item){
+        String ln = languageDrawMap.get(item.getLanguageResId());
+        return getPageLink(item) + "#language="+ln;
+    }
+
+    private static final SparseArray<String> languageDrawMap = new SparseArray<>();
+    static {
+        languageDrawMap.put(R.drawable.lang_de, "de");
+        languageDrawMap.put(R.drawable.lang_en, "en");
+        languageDrawMap.put(R.drawable.lang_zh, "zh");
+        languageDrawMap.put(R.drawable.lang_es, "es");
+        languageDrawMap.put(R.drawable.lang_fr, "fr");
+        languageDrawMap.put(R.drawable.lang_tr, "tr");
+        languageDrawMap.put(R.drawable.lang_jp, "jp");
+        languageDrawMap.put(R.drawable.lang_ar, "ar");
+        languageDrawMap.put(R.drawable.lang_it, "it");
+        languageDrawMap.put(R.drawable.lang_hr, "hr");
+        languageDrawMap.put(R.drawable.lang_sr, "sr");
+        languageDrawMap.put(R.drawable.lang_bs, "bs");
+        languageDrawMap.put(R.drawable.lang_de_en, "de");
+        languageDrawMap.put(R.drawable.lang_nl, "nl");
+        languageDrawMap.put(R.drawable.lang_ko, "ko");
+        languageDrawMap.put(R.drawable.lang_el, "el");
+        languageDrawMap.put(R.drawable.lang_ru, "ru");
+        languageDrawMap.put(R.drawable.lang_hi, "hi");
     }
 
 }

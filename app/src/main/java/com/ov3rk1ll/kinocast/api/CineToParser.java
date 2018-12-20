@@ -124,7 +124,6 @@ public class CineToParser extends Parser {
 
                         int lnId = Integer.valueOf(ln);
                         model.setLanguageResId(languageResMap.get(lnId));
-                        model.setImage(getPageLink(model) + "#language=de");
                         list.add(model);
                     }
                 } catch (Exception e) {
@@ -163,10 +162,8 @@ public class CineToParser extends Parser {
             JSONObject links = doc_l.getJSONObject("links");
             item.setTitle(entry.getString("title"));
             if (item.getLanguageResId() == R.drawable.lang_de) {
-                item.setImage(getPageLink(item) + "#language=de");
                 item.setSummary(entry.getString("plot_de"));
             } else {
-                item.setImage(getPageLink(item) + "#language=en");
                 item.setSummary(entry.getString("plot_en"));
             }
             item.setType(ViewModel.Type.MOVIE);
@@ -204,6 +201,8 @@ public class CineToParser extends Parser {
 
     @Override
     public ViewModel loadDetail(String url) {
+        if(url.contains("#")) url = url.substring(0, url.indexOf("#"));
+
         String[] parts = url.split("/");
         ViewModel model = new ViewModel();
         model.setSlug(parts[0]);

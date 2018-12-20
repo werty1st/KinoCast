@@ -103,7 +103,6 @@ public class MyKinoParser extends Parser {
                 model.setSlug(url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf(".")));
                 model.setTitle(element.select("div.name").first().textNodes().get(0).text());
                 model.setSummary(element.select("div.desk").text());
-                model.setImage(getPageLink(model) + "#language=de");
                 model.setLanguageResId(R.drawable.lang_de);
 
                 String genre = element.select("div.ganre").text();
@@ -135,7 +134,6 @@ public class MyKinoParser extends Parser {
         Element element = doc.select("div.single-product").first();
         model.setTitle(element.select("h1.post-title").first().textNodes().get(0).text().trim());
         model.setSummary(element.select("div.deskription").text().trim());
-        model.setImage(getPageLink(model) + "#language=de");
         model.setType(ViewModel.Type.MOVIE);
         model.setLanguageResId(R.drawable.lang_de);
         //model.setGenre(doc.select("li[Title=Genre]").text());

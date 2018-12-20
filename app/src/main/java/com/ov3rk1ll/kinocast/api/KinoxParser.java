@@ -101,8 +101,6 @@ public class KinoxParser extends Parser{
                 rating = rating.substring(rating.indexOf(":") + 1, rating.indexOf("/") - 1);
                 model.setRating(Float.valueOf(rating.trim()));
 
-                model.setImage(getPageLink(model) + "#language=" + language);
-
                 list.add(model);
             }catch (Exception e){
                 Log.e("Kinox", "Error parsing " + element.html(), e);
@@ -208,9 +206,6 @@ public class KinoxParser extends Parser{
             int lnId = Integer.valueOf(ln);
 
             model.setLanguageResId(languageResMap.get(lnId));
-            String language = languageKeyMap.get(lnId);
-
-            model.setImage(getPageLink(model) + "#language=" + language);
 
             model.setGenre(doc.select("li[Title=Genre]").text());
 

@@ -103,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
                 });
             }
 
-            ListPreference parser = (ListPreference)findPreference("parser");
+            ListPreference parser = (ListPreference) findPreference("parser");
             List<CharSequence> eT = new ArrayList<>();
             List<CharSequence> eV = new ArrayList<>();
             for (Class<?> h : PARSER_LIST) {
@@ -111,13 +111,23 @@ public class SettingsActivity extends AppCompatActivity {
                     Parser pi = (Parser) h.getConstructor().newInstance();
                     eT.add(pi.getParserName());
                     eV.add(Integer.toString(pi.getParserId()));
-                } catch (java.lang.InstantiationException | IllegalAccessException | InvocationTargetException  | NoSuchMethodException e) {
+                } catch (java.lang.InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     e.printStackTrace();
                 }
             }
             parser.setEntries(eT.toArray(new CharSequence[0]));
             parser.setEntryValues(eV.toArray(new CharSequence[0]));
             bindPreferenceSummaryToValue(parser);
+            parser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    Parser.selectParser(getActivity(), Integer.parseInt(o.toString()), preferences.getString("url", ""));
+                    sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, o);
+                    return true;
+                }
+            });
 
             bindPreferenceSummaryToValue(findPreference("url"));
             findPreference("url").setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -125,7 +135,7 @@ public class SettingsActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object o) {
 
                     //prevent app from crashing with empty url
-                    if (!o.toString().equalsIgnoreCase("") && !Patterns.WEB_URL.matcher(o.toString()).matches()){
+                    if (!o.toString().equalsIgnoreCase("") && !Patterns.WEB_URL.matcher(o.toString()).matches()) {
                         Toast.makeText(getActivity(), "Invalid URL", Toast.LENGTH_SHORT).show();
                         return false;
                     }

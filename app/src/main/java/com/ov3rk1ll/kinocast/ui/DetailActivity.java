@@ -515,6 +515,8 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 findViewById(R.id.layoutSeries).setVisibility(View.GONE);
                 setMirrorSpinner(item.getMirrors());
             }
+
+            ((TextView) findViewById(R.id.detail)).setText(item.getSummary());
             ActivityCompat.invalidateOptionsMenu(DetailActivity.this);
         }
     }
@@ -750,7 +752,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
 
     private String getCachedImage(int size, String type){
         TheMovieDb tmdbCache = new TheMovieDb(getApplication());
-        String cacheUrl = Parser.getInstance().getPageLink(item);
+        String cacheUrl = Parser.getInstance().getImdbLink(item);
         JSONObject json = tmdbCache.get(cacheUrl, false);
         if(json != null){
             try {

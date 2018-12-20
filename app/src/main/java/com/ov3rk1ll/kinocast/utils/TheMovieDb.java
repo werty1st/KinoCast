@@ -67,7 +67,7 @@ public class TheMovieDb {
                 cacheToMemory(url, json);
             }
         }
-        if(json == null || fetchIfNeeded) {
+        if(json == null && fetchIfNeeded) {
             try {
                 // Get IMDB-ID from page
                 ViewModel item = Parser.getInstance().loadDetail(url);

@@ -2,7 +2,7 @@
 
     <ListPreference
         android:key="parser"
-        android:title="Parser (Neustart erforderlich)"
+        android:title="Parser"
         android:defaultValue="0"
         />
     <EditTextPreference
