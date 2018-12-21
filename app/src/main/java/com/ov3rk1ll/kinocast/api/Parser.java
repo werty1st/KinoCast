@@ -48,6 +48,7 @@ public abstract class Parser {
             //Movie4kParser.class,
             MyKinoParser.class,
             CineToParser.class,
+            HDFilmeParser.class,
             TVStreamsParser.class
     };
 
@@ -116,11 +117,11 @@ public abstract class Parser {
                 .build();
     }
 
-    Document getDocument(String url) throws IOException {
+    public static Document getDocument(String url) throws IOException {
         return getDocument(url, null);
     }
 
-    Document getDocument(String url, Map<String, String> cookies) throws IOException {
+    public static Document getDocument(String url, Map<String, String> cookies) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();

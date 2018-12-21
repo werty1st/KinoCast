@@ -3,6 +3,7 @@ package com.winsontan520.wversionmanager.library;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -492,14 +493,12 @@ public class WVersionManager {
             intent.setDataAndType(uri, "application/vnd.android.package-archive");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK
                     | Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-            //context.startActivity(intent);
-            Intent chooser = Intent.createChooser(intent, "Chooser");
 
-            // Verify the intent will resolve to at least one activity
-            if (intent.resolveActivity(context.getPackageManager()) != null) {
-                context.startActivity(chooser);
+            try {
+                context.startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                context.startActivity(Intent.createChooser(intent, "Chooser"));
             }
-
         }
     }
 

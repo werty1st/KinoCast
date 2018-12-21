@@ -173,7 +173,7 @@ public class TVStreamsParser extends Parser {
 
     @Override
     public List<Host> getHosterList(ViewModel item, int season, String episode) {
-
+        item = loadDetail(item);
         List<Host> hostlist = new ArrayList<>();
         for (Host host : item.getMirrors()) {
             hostlist.add(host);
