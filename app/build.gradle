@@ -18,7 +18,7 @@ ext {
             version += " [Optimus Prime]" // + versionBuild
         return version
     }
-    supportLibVersion = '26.0.1'
+    supportLibVersion = '26.1.0'
 }
 
 /*flurryCrash {
@@ -79,6 +79,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
+    implementation "com.android.support:mediarouter-v7:${supportLibVersion}"
     implementation "com.android.support:design:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
     implementation "com.android.support:palette-v7:${supportLibVersion}"
