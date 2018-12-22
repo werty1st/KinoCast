@@ -8,5 +8,7 @@
 # For customization when using a Version Control System, please read the
 # header note.
 #Wed Feb 08 18:29:08 CET 2017
-sdk.dir=C\:\\android-sdk
-
+FLURRY_API_KEY=null
+MOBFOX_HASH=null
+FABRIC_API_KEY=null
+PAYPAL_DONATE=null

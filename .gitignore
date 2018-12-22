@@ -1,5 +1,8 @@
 .gradle
+
 /local.properties
+/build.properties
+
 /.idea
 .DS_Store
 /build

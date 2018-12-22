@@ -60,7 +60,7 @@ android {
         buildConfigField "boolean", "GMS_CHECK", "true"
 
         Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        properties.load(project.rootProject.file('build.properties').newDataInputStream())
         resValue "string", "paypal_donate", properties.getProperty('PAYPAL_DONATE')
         resValue "string", "FLURRY_API_KEY", properties.getProperty('FLURRY_API_KEY')
 
