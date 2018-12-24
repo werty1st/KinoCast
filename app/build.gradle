@@ -15,7 +15,7 @@ ext {
     calculateVersionName = {
         def version = "${versionMajor}.${versionMinor}.${versionPatch}"
         //if(versionBuild < 99)
-            version += " [Optimus Prime]" // + versionBuild
+        // version += " [Optimus Prime]" // + versionBuild
         return version
     }
     supportLibVersion = '26.1.0'
@@ -30,8 +30,10 @@ android {
     lintOptions {
         disable 'InvalidPackage'
     }
+
     compileSdkVersion 26
     buildToolsVersion '28.0.3'
+
     defaultConfig {
         applicationId "com.ov3rk1ll.kinocast"
         minSdkVersion 19
@@ -59,6 +61,7 @@ android {
 
         buildConfigField "boolean", "GMS_CHECK", "true"
 
+
         Properties properties = new Properties()
         properties.load(project.rootProject.file('build.properties').newDataInputStream())
         resValue "string", "paypal_donate", properties.getProperty('PAYPAL_DONATE')
@@ -67,13 +70,35 @@ android {
         //resValue "string", "mobfox_hash", properties.getProperty('MOBFOX_HASH')
         //manifestPlaceholders = [ FABRIC_API_KEY: properties.getProperty('FABRIC_API_KEY')]
     }
+
+    signingConfigs {
+        publish {
+            try{
+                storeFile file( System.getenv('STORE_FILE') )
+                storePassword System.getenv('STORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }catch(e)
+            {}
+        }
+    }
+
     buildTypes {
         release {
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        publish {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.publish
+        }
     }
+
+
 }
 
 dependencies {

@@ -51,4 +51,7 @@ RUN echo yes | $ANDROID_HOME/tools/bin/sdkmanager ${ANDROID_IMAGES}
 ENV PATH ${SDK_HOME}/bin:$PATH
 
 WORKDIR /opt/workspace
-VOLUME [ "/root/.gradle" ]
+
+CMD [ "/bin/sh", "-c", "/opt/workspace/gradlew", "build" ]
+
+VOLUME [ "/root/.gradle", "/root/.android" ]

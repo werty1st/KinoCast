@@ -11,3 +11,6 @@ app/flurry.config
 *.iml
 /app/debug
 /app/release
+
+
+keystore

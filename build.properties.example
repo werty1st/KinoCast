@@ -12,3 +12,9 @@ FLURRY_API_KEY=null
 MOBFOX_HASH=null
 FABRIC_API_KEY=null
 PAYPAL_DONATE=null
+
+#file mounted inside docker
+STORE_FILE=/opt/workspace/keystore
+STORE_PASSWORD=***
+KEY_ALIAS=key0
+KEY_PASSWORD=***
