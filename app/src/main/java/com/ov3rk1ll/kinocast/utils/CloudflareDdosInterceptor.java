@@ -94,7 +94,13 @@ public class CloudflareDdosInterceptor implements Interceptor {
                     Log.v("CloudflareDdos", "load " + solvedUrl[0] + ", raw-cookies=" + raw);
                     String[] cookies = raw.split(";");
                     for (String c : cookies) {
-                        jar.addCookie(Cookie.parse(request.url(), c.trim()));
+                        Cookie co = Cookie.parse(request.url(), c.trim());
+                        jar.addCookie(co);
+                        c = c + "; domain=" + request.url().host();
+                        if(request.url().isHttps()) c = c.trim() + "; secure";
+
+                        co = Cookie.parse(request.url(), c.trim());
+                        jar.addCookie(co);
                     }
 
                     // call the check url to get and store the correct cookies
