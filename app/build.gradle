@@ -15,7 +15,7 @@ ext {
     calculateVersionName = {
         def version = "${versionMajor}.${versionMinor}.${versionPatch}"
         //if(versionBuild < 99)
-            version += " [Optimus Prime]" // + versionBuild
+        // version += " [Optimus Prime]" // + versionBuild
         return version
     }
     supportLibVersion = '27.1.1'
@@ -37,6 +37,7 @@ android {
 
     compileSdkVersion 27
     buildToolsVersion '28.0.3'
+
     defaultConfig {
         applicationId "com.ov3rk1ll.kinocast"
         minSdkVersion 19
@@ -64,24 +65,44 @@ android {
 
         buildConfigField "boolean", "GMS_CHECK", "true"
 
+
         Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        properties.load(project.rootProject.file('build.properties').newDataInputStream())
         resValue "string", "paypal_donate", properties.getProperty('PAYPAL_DONATE')
         resValue "string", "FLURRY_API_KEY", properties.getProperty('FLURRY_API_KEY')
-        resValue "string", "ADMOB_KEY_API", properties.getProperty('ADMOB_KEY_API')
-        resValue "string", "ADMOB_KEY_FULL", properties.getProperty('ADMOB_KEY_FULL')
-        resValue "string", "ADMOB_KEY_BANNER", properties.getProperty('ADMOB_KEY_BANNER')
-
+   
         //resValue "string", "mobfox_hash", properties.getProperty('MOBFOX_HASH')
         //manifestPlaceholders = [ FABRIC_API_KEY: properties.getProperty('FABRIC_API_KEY')]
     }
+
+    signingConfigs {
+        publish {
+            try{
+                storeFile file( System.getenv('STORE_FILE') )
+                storePassword System.getenv('STORE_PASSWORD')
+                keyAlias System.getenv('KEY_ALIAS')
+                keyPassword System.getenv('KEY_PASSWORD')
+            }catch(e)
+            {}
+        }
+    }
+
     buildTypes {
         release {
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        publish {
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.publish
+        }
     }
+
+
 }
 
 dependencies {
@@ -96,7 +117,7 @@ dependencies {
     implementation 'com.github.woxthebox:draglistview:1.6.3'
     implementation 'org.jsoup:jsoup:1.11.3'
     implementation 'com.google.android.gms:play-services-cast-framework:16.1.2'
-    //implementation 'com.google.android.gms:play-services-ads:17.1.2'
+    implementation 'com.flurry.android:ads:11.4.0@aar'
     implementation 'com.flurry.android:analytics:11.4.0@aar'
 
     implementation 'dnsjava:dnsjava:2.1.8'

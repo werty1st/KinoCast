@@ -1,0 +1,32 @@
+version: "2.2"
+
+services:
+
+    gradle:
+        image: android-gradle:4.6
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - gradle:/root/.gradle
+            - android:/root/.android
+            - .:/opt/workspace
+        working_dir: "/opt/workspace"
+        #command: [ "/bin/sh", "-c", "/opt/workspace/gradlew", "build" ]
+
+
+
+volumes: 
+    gradle:
+    android:
+
+
+
+# docker-compose build
+# docker-compose up
+
+#build
+#docker run -it --rm -v $(pwd):/opt/workspace -v gradle:/root/.gradle --workdir=/opt/workspace android-gradle:4.6 /bin/sh -c "./gradlew build"
+
+#sign
+#docker run -it --rm --env-file build.properties -v $(pwd):/opt/workspace -v gradle:/root/.gradle --workdir=/opt/workspace android-gradle:4.6 /bin/sh -c "./gradlew assemblePublish"
