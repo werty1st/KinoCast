@@ -248,7 +248,7 @@ public class HDFilmeParser extends Parser {
     @SuppressWarnings("deprecation")
     @Override
     public String getSearchPage(String query) {
-        return URL_BASE + "index.php?story=" + URLEncoder.encode(query) + "&do=search&subaction=search";
+        return URL_BASE + "movie-search?key=" + URLEncoder.encode(query);
     }
 
     @Override

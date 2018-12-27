@@ -8,9 +8,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseIntArray;
 
-import com.google.android.gms.cast.CastMediaControlIntent;
-import com.google.android.libraries.cast.companionlibrary.cast.CastConfiguration;
-import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
 import com.ov3rk1ll.kinocast.BuildConfig;
 
 import org.json.JSONException;
@@ -29,7 +26,8 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Utils {
-    public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
+    //public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
     public static boolean DisableSSLCheck = false;
 
     public static boolean isStringEmpty(String val) {
@@ -109,7 +107,7 @@ public class Utils {
         return Jsoup.connect(url)
                 .validateTLSCertificates(!DisableSSLCheck)
                 .userAgent(Utils.USER_AGENT)
-                .timeout(3000);
+                .timeout(6000);
     }
 
     @SuppressWarnings("deprecation")
@@ -132,27 +130,4 @@ public class Utils {
         return sparseArray;
     }
 
-    public static VideoCastManager initializeCastManager(Context context) {
-        CastConfiguration.Builder builder = new CastConfiguration.Builder(CastMediaControlIntent.DEFAULT_MEDIA_RECEIVER_APPLICATION_ID)
-                .enableAutoReconnect()
-                .enableCaptionManagement()
-                .enableWifiReconnection();
-
-        if (BuildConfig.DEBUG) {
-            builder.enableDebug();
-        }
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences.getBoolean("chromecast_lock_screen", true)) {
-            builder.enableLockScreen();
-        }
-
-        if (preferences.getBoolean("chromecast_notification", true)) {
-            builder.enableNotification()
-                    .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_PLAY_PAUSE, true)
-                    .addNotificationAction(CastConfiguration.NOTIFICATION_ACTION_DISCONNECT, true);
-        }
-
-        return VideoCastManager.initialize(context, builder.build());
-    }
 }

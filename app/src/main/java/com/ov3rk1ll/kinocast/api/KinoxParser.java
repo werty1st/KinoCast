@@ -157,6 +157,7 @@ public class KinoxParser extends Parser{
                 for(int i = 0; i < c; i++){
                     Host h = Host.selectById(hosterId);
                     if(h == null) continue;
+                    h.setSlug(Integer.toString(i + 1));
                     h.setMirror(i + 1);
                     if(h.isEnabled()){
                         hostlist.add(h);
@@ -241,6 +242,7 @@ public class KinoxParser extends Parser{
                     Host h = Host.selectById(hosterId);
                     if(h == null) continue;
                     h.setMirror(i + 1);
+                    h.setSlug(Integer.toString(i + 1));
                     if(h.isEnabled()){
                         hostlist.add(h);
                     }
@@ -260,13 +262,6 @@ public class KinoxParser extends Parser{
 
         String href = "";
         Method getLink = null;
-
-        try {
-            getLink = host.getClass().getMethod("getMirrorLink", Document.class);
-        } catch (NoSuchMethodException e) {
-            //not implemented
-            //i'm not a java developer so i didn't want to change much of the code
-        }
 
         try {
             queryTask.updateProgress("Get host from " + URL_BASE + url);
@@ -304,12 +299,12 @@ public class KinoxParser extends Parser{
 
     @Override
     public String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, Host host){
-        return getMirrorLink(queryTask, host,"aGET/Mirror/" + item.getSlug() + "&Hoster=" + host.getId() + "&Mirror=" + host.getMirror());
+        return getMirrorLink(queryTask, host,"aGET/Mirror/" + item.getSlug() + "&Hoster=" + host.getId() + "&Mirror=" + host.getSlug());
     }
 
     @Override
     public String getMirrorLink(DetailActivity.QueryPlayTask queryTask, ViewModel item, Host host, int season, String episode){
-        return getMirrorLink(queryTask, host,"aGET/Mirror/" + item.getSlug() + "&Hoster=" + host.getId() + "&Mirror=" + host.getMirror() + "&Season=" + season + "&Episode=" + episode);
+        return getMirrorLink(queryTask, host,"aGET/Mirror/" + item.getSlug() + "&Hoster=" + host.getId() + "&Mirror=" + host.getSlug() + "&Season=" + season + "&Episode=" + episode);
     }
 
     @SuppressWarnings("deprecation")

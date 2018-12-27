@@ -15,7 +15,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,7 +27,6 @@ import android.support.v7.widget.ActionMenuView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -47,12 +45,14 @@ import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.flurry.android.FlurryAgent;
+
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.common.images.WebImage;
-import com.google.android.libraries.cast.companionlibrary.cast.BaseCastManager;
-import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
-import com.ov3rk1ll.kinocast.BuildConfig;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
@@ -62,6 +62,7 @@ import com.ov3rk1ll.kinocast.ui.helper.PaletteManager;
 import com.ov3rk1ll.kinocast.ui.util.glide.OkHttpViewModelStreamFetcher;
 import com.ov3rk1ll.kinocast.ui.util.glide.ViewModelGlideRequest;
 import com.ov3rk1ll.kinocast.utils.BookmarkManager;
+import com.ov3rk1ll.kinocast.utils.ExceptionAsyncTask;
 import com.ov3rk1ll.kinocast.utils.TheMovieDb;
 import com.ov3rk1ll.kinocast.utils.Utils;
 import com.ov3rk1ll.kinocast.utils.WeightedHostComparator;
@@ -82,7 +83,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     private ViewModel item;
     private RelativeLayout  mAdView;
 
-    private VideoCastManager mVideoCastManager;
+    private CastContext mCastContext;
 
     @SuppressWarnings("FieldCanBeLocal")
     private boolean SHOW_ADS = true;
@@ -168,12 +169,10 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         super.onCreate(savedInstanceState);
         activity = this;
 
-        if (BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
-        mVideoCastManager = Utils.initializeCastManager(this);
+        //if (BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
+        mCastContext = CastContext.getSharedInstance(this);
 
         setContentView(R.layout.activity_detail);
-
-        mVideoCastManager.reconnectSessionIfPossible();
 
         // actionBar.setDisplayHomeAsUpEnabled(true);
 
@@ -203,11 +202,12 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
             }
         });
 
+        FlurryAgent.onStartSession(this);
+
         mAdView = (RelativeLayout)findViewById(R.id.adView);
         if (SHOW_ADS) {
-            findViewById(R.id.donateView).setVisibility(View.GONE);
-            String mAdSpaceName = "Detail Banner";
-
+            mAdView.setVisibility(View.GONE);
+            findViewById(R.id.donateView).setVisibility(View.VISIBLE);
         } else {
             mAdView.setVisibility(View.GONE);
             findViewById(R.id.donateView).setVisibility(View.GONE);
@@ -351,17 +351,11 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     @Override
     protected void onResume() {
         super.onResume();
-        mVideoCastManager.incrementUiCounter();
-        //TODO Check if we are playing the current item
-        //if(mAdView != null) mAdView.onResume();
-
-        //if(mVideoCastManager.getRemoteMediaInformation())
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mVideoCastManager.decrementUiCounter();
 
         //Update Bookmark to keep series info
         if (item.getType() == ViewModel.Type.SERIES) {
@@ -379,6 +373,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         //if(mAdView != null) mAdView.onPause();
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -386,7 +381,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         //menu = ((ActionMenuView) findViewById(R.id.bar_split)).getMenu();
         menu.clear();
         getMenuInflater().inflate(R.menu.detail, menu);
-        mVideoCastManager.addMediaRouterButton(menu, R.id.media_route_menu_item);
+        CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
         // Set visibility depending on detail data
         menu.findItem(R.id.action_imdb).setVisible(item.getImdbId() != null);
 
@@ -440,11 +435,6 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        return mVideoCastManager.onDispatchVolumeKeyEvent(event, 0.05) || super.dispatchKeyEvent(event);
-    }
-
     private void setMirrorSpinner(Host mirrors[]) {
         if (mirrors != null && mirrors.length > 0) {
             Arrays.sort(mirrors, new WeightedHostComparator(Utils.getWeightedHostList(getApplicationContext())));
@@ -468,7 +458,15 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         return this.onOptionsItemSelected(menuItem);
     }
 
-    private class QueryDetailTask extends AsyncTask<Void, Void, Boolean> {
+
+    public boolean isCastConnected() {
+        CastSession castSession = mCastContext
+                .getSessionManager()
+                .getCurrentCastSession();
+        return (castSession != null && castSession.isConnected());
+    }
+
+    private class QueryDetailTask extends ExceptionAsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -478,19 +476,28 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-
-            Map<String, String> articleParams = new HashMap<>();
-            articleParams.put("Name", item.getTitle());
-            articleParams.put("Type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
-            articleParams.put("Id", item.getSlug());
+        protected Boolean doInBackground() throws Exception {
             item = Parser.getInstance().loadDetail(item);
+            if(item!=null) {
+                Map<String, String> articleParams = new HashMap<>();
+                articleParams.put("parser", Parser.getInstance().getParserName());
+                articleParams.put("video_name", item.getTitle());
+                articleParams.put("video_type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
+                articleParams.put("video_imdb", item.getImdbId());
+                articleParams.put("video_slug", item.getSlug());
+                articleParams.put("video_url", Parser.getInstance().getPageLink(item));
+                FlurryAgent.logEvent("MovieDetail", articleParams);
+            }
             return true;
         }
 
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
+            if(getException() != null) {
+                Log.e("QueryDetailTask","can't load details", getException());
+                return;
+            }
 
             if (item.getType() == ViewModel.Type.SERIES) {
                 BookmarkManager.Bookmark b = bookmarkManager.findItem(item);
@@ -521,7 +528,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         }
     }
 
-    private class QueryHosterTask extends AsyncTask<Void, Void, List<Host>> {
+    private class QueryHosterTask extends ExceptionAsyncTask<Void, Void, List<Host>> {
         Season s;
         int position;
 
@@ -534,7 +541,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         }
 
         @Override
-        protected List<Host> doInBackground(Void... params) {
+        protected List<Host> doInBackground() throws Exception {
             if (item.getType() == ViewModel.Type.SERIES) {
                 return Parser.getInstance().getHosterList(item, s.id, s.episodes[position]);
             }
@@ -544,11 +551,15 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         @Override
         protected void onPostExecute(List<Host> list) {
             super.onPostExecute(list);
+            if(getException() != null) {
+                Log.e("QueryHosterTask","can't load hoster", getException());
+                return;
+            }
             setMirrorSpinner(list == null ? null : list.toArray(new Host[list.size()]));
         }
     }
 
-    public class QueryPlayTask extends AsyncTask<Void, String, String> {
+    public class QueryPlayTask extends ExceptionAsyncTask<Void, String, String> {
         private ProgressDialog progressDialog;
         private Context context;
         Host host;
@@ -597,7 +608,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected String doInBackground() throws Exception {
             String video = host.getVideoUrl();
             if(video == null || video.isEmpty()) {
 
@@ -629,6 +640,12 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         protected void onPostExecute(final String link) {
             super.onPostExecute(link);
             progressDialog.dismiss();
+
+            if(getException() != null) {
+                Log.e("QueryHosterTask","can't load player", getException());
+                return;
+            }
+
             if (!TextUtils.isEmpty(link)) {
                 Log.i("Play", "Getting player for '" + link + "'");
                 final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
@@ -641,7 +658,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 List<ResolveInfo> launchables = pm.queryIntentActivities(intent, 0);
                 List<AppAdapter.App> apps = new ArrayList<>();
                 Collections.sort(launchables, new ResolveInfo.DisplayNameComparator(pm));
-                if (mVideoCastManager.isConnected()) {
+                if (isCastConnected()) {
                     apps.add(new AppAdapter.App(
                             getString(R.string.player_chromecast_list_entry),
                             getResources().getDrawable(R.drawable.ic_player_chromecast),
@@ -668,13 +685,19 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                     @Override
                     public void onClick(DialogInterface dialog, int position) {
                         AppAdapter.App app = adapter.getItem(position);
-                        Map<String, String> articleParams = new HashMap<>();
-                        articleParams.put("Name", item.getTitle());
-                        articleParams.put("Type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
-                        articleParams.put("Id", item.getSlug());
 
-                        articleParams.put("Hoster", host.getName());
-                        articleParams.put("Movie", item.getTitle());
+                        Map<String, String> articleParams = new HashMap<>();
+                        articleParams.put("parser", Parser.getInstance().getParserName());
+                        articleParams.put("video_name", item.getTitle());
+                        articleParams.put("video_type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
+                        articleParams.put("video_imdb", item.getImdbId());
+                        articleParams.put("video_slug", item.getSlug());
+                        articleParams.put("video_url", Parser.getInstance().getPageLink(item));
+                        articleParams.put("host_name", host.getName());
+                        articleParams.put("host_slug", host.getSlug());
+                        articleParams.put("host_url", host.getUrl());
+                        articleParams.put("host_videourl", host.getVideoUrl());
+
                         if (app.getComponent() == null) {
                             startPlaybackOnChromecast(link);
                             articleParams.put("Player", "Chromecast");
@@ -683,6 +706,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                             articleParams.put("Player", app.getComponent().toString());
                             startActivity(intent);
                         }
+                        FlurryAgent.logEvent("MoviePlay", articleParams);
                         dialog.dismiss();
                     }
                 });
@@ -737,8 +761,11 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 .setMetadata(mediaMetadata)
                 .build();
 
-        mVideoCastManager.startVideoCastControllerActivity(DetailActivity.this, mediaInfo, 0, true);
-    }
+        mCastContext.getSessionManager()
+                .getCurrentCastSession()
+                .getRemoteMediaClient()
+                .load(mediaInfo, true);
+  }
 
     /*public void startCastControllerActivity(Context context, Bundle mediaWrapper, int position, boolean shouldStart) {
         Intent intent = new Intent(context, ColorfulVideoCastControllerActivity.class);

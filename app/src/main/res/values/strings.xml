@@ -85,6 +85,6 @@ Deine Favoriten findest du im Menü auf der linken Seite.</string>
     <string name="allow_invalid_ssl_title">SSL Prüfung überspringen</string>
     <string name="error_ssl">SSL Error</string>
     <string name="ssl_connect_anyway">Trotzdem verbinden?</string>
-
+    <string name="media_route_menu_title">Play on&#8230;</string>
 
 </resources>

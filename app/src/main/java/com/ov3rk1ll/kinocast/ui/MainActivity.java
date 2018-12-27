@@ -23,7 +23,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,14 +30,11 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import com.google.android.libraries.cast.companionlibrary.cast.BaseCastManager;
-import com.google.android.libraries.cast.companionlibrary.cast.VideoCastManager;
-import com.kobakei.ratethisapp.RateThisApp;
-import com.ov3rk1ll.kinocast.BuildConfig;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.ui.helper.layout.SearchSuggestionAdapter;
-import com.ov3rk1ll.kinocast.utils.Utils;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 
@@ -52,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private CharSequence mTitle;
     private boolean mIsSearchView = false;
     private ProgressBar mProgressBar;
+    private CastContext mCastContext;
 
     private SearchSuggestionAdapter searchSuggestionAdapter;
     private DrawerLayout mDrawerLayout;
@@ -77,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
-        Utils.initializeCastManager(this);
+        //if(BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
         setContentView(R.layout.activity_main);
 
         activity = this;
@@ -89,18 +85,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         WVersionManager versionManager = new WVersionManager(this);
         versionManager.setVersionContentUrl(getString(R.string.update_check));
         versionManager.checkVersion();
-
-        RateThisApp.onStart(this);
-        RateThisApp.Config config = new RateThisApp.Config();
-        config.setUrl(getString(R.string.paypal_donate));
-        config.setTitle(R.string.donate_dialog_title);
-        config.setMessage(R.string.donate_dialog_message);
-        config.setYesButtonText(R.string.donate_dialog_yes);
-        config.setNoButtonText(R.string.donate_dialog_never);
-        config.setCancelButtonText(R.string.donate_dialog_later);
-        RateThisApp.init(config);
-        // If the criteria is satisfied, "Rate this app" dialog will be shown
-        // RateThisApp.showRateDialogIfNeeded(this);
 
         /*BackupManager bm = new BackupManager(this);
         bm.requestRestore(new RestoreObserver() {
@@ -132,8 +116,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.addView(mProgressBar, layoutParams);
         setSupportActionBar(toolbar);
 
-        VideoCastManager.getInstance().reconnectSessionIfPossible();
-
+        mCastContext = CastContext.getSharedInstance(this);
 
         // listen for navigation events
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -195,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
-        VideoCastManager.getInstance().incrementUiCounter();
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         // remove active state from settings
         if(mNavItemLast != -1) {
@@ -209,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
-        VideoCastManager.getInstance().decrementUiCounter();
     }
 
     @Override
@@ -218,11 +199,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         outState.putString(STATE_TITLE, mTitle.toString());
         outState.putBoolean(STATE_IS_SEARCHVIEW, mIsSearchView);
         outState.putInt(NAV_ITEM_ID, mNavItemId);
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        return VideoCastManager.getInstance().onDispatchVolumeKeyEvent(event, 0.05) || super.dispatchKeyEvent(event);
     }
 
     public void restoreActionBar() {
@@ -239,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(final Menu menu) {
         if (!mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
             getMenuInflater().inflate(R.menu.main, menu);
-            VideoCastManager.getInstance().addMediaRouterButton(menu, R.id.media_route_menu_item);
+            CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), menu, R.id.media_route_menu_item);
 
             searchMenuItem = menu.findItem(R.id.action_search);
 

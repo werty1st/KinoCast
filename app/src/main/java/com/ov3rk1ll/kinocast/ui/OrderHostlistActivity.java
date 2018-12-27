@@ -131,11 +131,13 @@ public class OrderHostlistActivity extends AppCompatActivity {
 
         private int mLayoutId;
         private int mGrabHandleId;
+        private boolean mdragOnLongPress;
 
         ItemAdapter(ArrayList<Item> list, int layoutId, int grabHandleId, boolean dragOnLongPress) {
-            super(dragOnLongPress);
+            super();
             mLayoutId = layoutId;
             mGrabHandleId = grabHandleId;
+            mdragOnLongPress = dragOnLongPress;
             setHasStableIds(true);
             setItemList(list);
         }
@@ -156,16 +158,16 @@ public class OrderHostlistActivity extends AppCompatActivity {
         }
 
         @Override
-        public long getItemId(int position) {
+        public long getUniqueItemId(int position) {
             return mItemList.get(position).getId();
         }
 
-        class ViewHolder extends DragItemAdapter<Item, ItemAdapter.ViewHolder>.ViewHolder {
+        class ViewHolder extends DragItemAdapter.ViewHolder {
             TextView mText;
             ImageView mImage;
 
             ViewHolder(final View itemView) {
-                super(itemView, mGrabHandleId);
+                super(itemView, mGrabHandleId, mdragOnLongPress);
                 mText = (TextView) itemView.findViewById(R.id.text);
                 mImage = (ImageView) itemView.findViewById(R.id.image);
             }

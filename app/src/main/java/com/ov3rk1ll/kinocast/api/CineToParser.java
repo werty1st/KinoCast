@@ -14,9 +14,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.ov3rk1ll.kinocast.R;
-import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
+import com.ov3rk1ll.kinocast.api.mirror.Openload;
 import com.ov3rk1ll.kinocast.api.mirror.Streamango;
+import com.ov3rk1ll.kinocast.api.mirror.Vivo;
 import com.ov3rk1ll.kinocast.data.ViewModel;
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 import com.ov3rk1ll.kinocast.ui.MainActivity;
@@ -174,6 +175,28 @@ public class CineToParser extends Parser {
                 JSONArray entries = links.getJSONArray("streamango");
                 for (int i = 1; i < entries.length(); i++) {
                     Host h = new Streamango();
+                    h.setMirror(i);
+                    h.setSlug("https://cine.to/out/" + entries.getInt(i));
+                    if (h.isEnabled()) {
+                        hostlist.add(h);
+                    }
+                }
+            }
+            if (links.has("openload")) {
+                JSONArray entries = links.getJSONArray("openload");
+                for (int i = 1; i < entries.length(); i++) {
+                    Host h = new Openload();
+                    h.setMirror(i);
+                    h.setSlug("https://cine.to/out/" + entries.getInt(i));
+                    if (h.isEnabled()) {
+                        hostlist.add(h);
+                    }
+                }
+            }
+            if (links.has("vivo")) {
+                JSONArray entries = links.getJSONArray("vivo");
+                for (int i = 1; i < entries.length(); i++) {
+                    Host h = new Vivo();
                     h.setMirror(i);
                     h.setSlug("https://cine.to/out/" + entries.getInt(i));
                     if (h.isEnabled()) {

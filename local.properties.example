@@ -13,3 +13,6 @@ MOBFOX_HASH=null
 sdk.dir=C\:\\android-sdk
 FABRIC_API_KEY=null
 PAYPAL_DONATE=null
+ADMOB_KEY_API=null
+ADMOB_KEY_FULL=null
+ADMOB_KEY_BANNER=null

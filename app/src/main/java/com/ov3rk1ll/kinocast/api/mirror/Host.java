@@ -24,6 +24,8 @@ public abstract class Host implements Serializable {
             VShare.class,
             Vidlox.class,
             VidCloud.class,
+            Vivo.class,
+            Openload.class,
             Direct.class
     };
 

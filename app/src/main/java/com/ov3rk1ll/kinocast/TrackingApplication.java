@@ -28,6 +28,8 @@ public class TrackingApplication extends Application {
                     .withCaptureUncaughtExceptions(true)
                     .build(this, getString(R.string.FLURRY_API_KEY));
         }
+        //com.google.android.gms.ads.MobileAds.initialize(this, "ca-app-pub-2728479259954125~72137");
+
         super.onCreate();
     }
 }
