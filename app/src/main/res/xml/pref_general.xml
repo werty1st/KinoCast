@@ -29,7 +29,7 @@
 
     <PreferenceScreen
         android:title="Chromecast Einstellungen"
-        android:summary="Einstellungen für Chromecast streaming">
+        android:summary="Einstellungen für Chromecast streaming" android:key="chromecast_prefs">
 
         <CheckBoxPreference android:key="chromecast_lock_screen"
             android:title="Player am Sperrbildschirm"

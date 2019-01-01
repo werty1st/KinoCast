@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         activity = this;
 
         //if (BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
-        mCastContext = CastContext.getSharedInstance(this);
+        if (Utils.checkPlayServices(this, Utils.GMS_CAST_MINVERSION)) mCastContext = CastContext.getSharedInstance(this);
 
         setContentView(R.layout.activity_detail);
 
@@ -460,6 +460,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
 
 
     public boolean isCastConnected() {
+        if(mCastContext == null) return false;
         CastSession castSession = mCastContext
                 .getSessionManager()
                 .getCurrentCastSession();
@@ -729,6 +730,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     }
 
     public void startPlaybackOnChromecast(String link) {
+        if (mCastContext == null) return;
         MediaMetadata mediaMetadata;
         if (item.getType() == ViewModel.Type.SERIES) {
             Season s = item.getSeasons()[((Spinner) findViewById(R.id.spinnerSeason)).getSelectedItemPosition()];

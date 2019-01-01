@@ -5,12 +5,16 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.ov3rk1ll.kinocast.api.KinoxParser;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.utils.Utils;
 
 
 public class TrackingApplication extends Application {
+
+
 
     @Override
     public void onCreate() {
@@ -29,7 +33,6 @@ public class TrackingApplication extends Application {
                     .build(this, getString(R.string.FLURRY_API_KEY));
         }
         //com.google.android.gms.ads.MobileAds.initialize(this, "ca-app-pub-2728479259954125~72137");
-
         super.onCreate();
     }
 }

@@ -359,4 +359,10 @@ public class KinoxParser extends Parser{
     public String getLatestSeries(){
         return URL_BASE + "Latest-Series.html";
     }
+
+    @Override
+    public String PreSaveParserUrl(String newUrl){
+
+        return newUrl.endsWith("/") ? newUrl : newUrl + "/";
+    }
 }

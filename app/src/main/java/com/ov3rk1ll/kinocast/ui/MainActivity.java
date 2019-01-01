@@ -35,6 +35,7 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.ui.helper.layout.SearchSuggestionAdapter;
+import com.ov3rk1ll.kinocast.utils.Utils;
 import com.winsontan520.wversionmanager.library.WVersionManager;
 
 
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.addView(mProgressBar, layoutParams);
         setSupportActionBar(toolbar);
 
-        mCastContext = CastContext.getSharedInstance(this);
+        if(Utils.checkPlayServices(this, Utils.GMS_CAST_MINVERSION)) mCastContext = CastContext.getSharedInstance(this);
 
         // listen for navigation events
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

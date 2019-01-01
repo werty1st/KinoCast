@@ -139,6 +139,9 @@ public class SettingsActivity extends AppCompatActivity {
                         Toast.makeText(getActivity(), "Invalid URL", Toast.LENGTH_SHORT).show();
                         return false;
                     }
+                    if(!o.toString().equalsIgnoreCase("")){
+                        o = Parser.getInstance().PreSaveParserUrl(o.toString());
+                    }
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     Parser.selectParser(getActivity(), Integer.parseInt(preferences.getString("parser", Integer.toString(KinoxParser.PARSER_ID))), o.toString());
                     preference.setSummary(o.toString());
@@ -153,6 +156,8 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
+            findPreference("chromecast_prefs").setEnabled(Utils.checkPlayServices(getActivity(), Utils.GMS_CAST_MINVERSION));
+
             // Add 'notifications' preferences, and a corresponding header.
         /*PreferenceCategory fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_notifications);

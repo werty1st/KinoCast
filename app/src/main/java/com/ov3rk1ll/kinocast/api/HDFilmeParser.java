@@ -275,4 +275,10 @@ public class HDFilmeParser extends Parser {
     public String getLatestSeries() {
         return URL_BASE + "movie-series";
     }
+
+    @Override
+    public String PreSaveParserUrl(String newUrl){
+
+        return newUrl.endsWith("/") ? newUrl : newUrl + "/";
+    }
 }

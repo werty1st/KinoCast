@@ -303,4 +303,10 @@ public class MyKinoParser extends Parser {
     public String getLatestSeries() {
         return URL_BASE + "serien/";
     }
+
+    @Override
+    public String PreSaveParserUrl(String newUrl){
+
+        return newUrl.endsWith("/") ? newUrl : newUrl + "/";
+    }
 }

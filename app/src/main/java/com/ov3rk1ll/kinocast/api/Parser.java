@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.Cookie;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -60,12 +61,12 @@ public abstract class Parser {
 
     public static void selectParser(Context context, int id) {
         instance = selectByParserId(context, id);
-        initHttpClient(context);
+        instance.initHttpClient(context);
     }
 
     public static void selectParser(Context context, int id, String url) {
         instance = selectByParserId(id, url);
-        initHttpClient(context);
+        instance.initHttpClient(context);
     }
 
     public static Parser selectByParserId(Context context, int id) {
@@ -105,8 +106,14 @@ public abstract class Parser {
     }
 
 
-    private static void initHttpClient(Context context) {
+    private void initHttpClient(Context context) {
         injectedCookieJar = InjectedCookieJar.Build(context);
+        List<Cookie> colist = injectedCookieJar.loadForRequest(HttpUrl.parse(URL_BASE));
+        injectedCookieJar.clear();
+        for (Cookie co: colist) {
+            injectedCookieJar.addCookie(co);
+        }
+
         client = new OkHttpClient.Builder()
                 .followRedirects(false)
                 .followSslRedirects(false)
@@ -312,5 +319,10 @@ public abstract class Parser {
         languageDrawMap.put(R.drawable.lang_ru, "ru");
         languageDrawMap.put(R.drawable.lang_hi, "hi");
     }
+
+    public String PreSaveParserUrl(String newUrl){
+        return newUrl;
+    }
+
 
 }

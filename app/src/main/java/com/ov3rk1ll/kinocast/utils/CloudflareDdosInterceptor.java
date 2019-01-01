@@ -36,6 +36,7 @@ public class CloudflareDdosInterceptor implements Interceptor {
         final Response response = chain.proceed(request);
         if(response.code() == 503) {
             Log.d(TAG, "intercept: Status " + response.code() + " for " + request.url());
+            Log.d(TAG, "intercept: Cookie: " + response.header("Set-Cookie"));
             Log.v(TAG, "intercept: try to handle request to " + request.url().toString());
             String body = response.body().string();
             final boolean[] requestDone = {false};
@@ -94,12 +95,10 @@ public class CloudflareDdosInterceptor implements Interceptor {
                     Log.v("CloudflareDdos", "load " + solvedUrl[0] + ", raw-cookies=" + raw);
                     String[] cookies = raw.split(";");
                     for (String c : cookies) {
-                        Cookie co = Cookie.parse(request.url(), c.trim());
-                        jar.addCookie(co);
                         c = c + "; domain=" + request.url().host();
                         if(request.url().isHttps()) c = c.trim() + "; secure";
 
-                        co = Cookie.parse(request.url(), c.trim());
+                        Cookie co = Cookie.parse(request.url(), c.trim());
                         jar.addCookie(co);
                     }
 
