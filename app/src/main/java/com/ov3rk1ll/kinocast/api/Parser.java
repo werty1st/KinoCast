@@ -50,6 +50,7 @@ public abstract class Parser {
             MyKinoParser.class,
             CineToParser.class,
             HDFilmeParser.class,
+            NetzkinoParser.class,
             TVStreamsParser.class
     };
 
