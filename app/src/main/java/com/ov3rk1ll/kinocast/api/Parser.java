@@ -42,7 +42,7 @@ public abstract class Parser {
     private static final int PARSER_ID = -1;
     String URL_BASE;
     private static OkHttpClient client;
-    private static InjectedCookieJar injectedCookieJar;
+    public static InjectedCookieJar injectedCookieJar;
 
     public static Class<?>[] PARSER_LIST = {
             KinoxParser.class,

@@ -8,9 +8,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseIntArray;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.ov3rk1ll.kinocast.BuildConfig;
+import com.google.android.gms.cast.framework.CastContext;
+import com.ov3rk1ll.kinocast.api.Parser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,10 +30,6 @@ public class Utils {
     //public static final String USER_AGENT = "KinoCast v" + BuildConfig.VERSION_NAME;
     public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";
     public static boolean DisableSSLCheck = false;
-    public static int GMS_VER = 0;
-    public static boolean GMS_AVAIL = false;
-    public static boolean GMS_CHECKED = false;
-    public static final int GMS_CAST_MINVERSION = 15000000;
 
     public static boolean isStringEmpty(String val) {
         if (val == null) return true;
@@ -56,21 +51,32 @@ public class Utils {
         OkHttpClient client = new OkHttpClient.Builder()
                 .followRedirects(false)
                 .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
+                .cookieJar(Parser.injectedCookieJar)
                 .build();
         Request request = new Request.Builder().url(url).build();
         try {
             Response response = client.newCall(request).execute();
-            return response.header("Location");
+            String ret = response.header("Location");
+            return ret;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
+    public static String getMultiRedirectTarget(String url) {
+        String lastRet = url;
+        String lastUrl;
+        do {
+            lastUrl = lastRet;
+            lastRet = getRedirectTarget(lastUrl);
+        } while (lastRet != null);
+        return lastUrl;
+    }
+
+
     public static JSONObject readJson(String url) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
-                .build();
+        OkHttpClient client = buildOkHttpClient();
         Request request = new Request.Builder().url(url).build();
 
         Log.i("Utils", "read json from " + url);
@@ -85,9 +91,7 @@ public class Utils {
     }
 
     public static JSONObject readJson(String url, Set<Map.Entry<String, String>> postData) {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
-                .build();
+        OkHttpClient client = buildOkHttpClient();
 
         MultipartBody.Builder bodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
@@ -115,6 +119,12 @@ public class Utils {
                 .userAgent(Utils.USER_AGENT)
                 .timeout(6000);
     }
+    public static OkHttpClient buildOkHttpClient() {
+        return new OkHttpClient.Builder()
+                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
+                .cookieJar(Parser.injectedCookieJar)
+                .build();
+    }
 
     @SuppressWarnings("deprecation")
     public static boolean isWifiConnected(Context context) {
@@ -136,19 +146,11 @@ public class Utils {
         return sparseArray;
     }
 
-    public static boolean checkPlayServices(Context context, int minVersion) {
-        Log.i("Utils", "GMS_CHECKED " + GMS_CHECKED);
-        if(!GMS_CHECKED)
-        {
-            GoogleApiAvailability gApi = GoogleApiAvailability.getInstance();
-            int resultCode = gApi.isGooglePlayServicesAvailable(context);
-            Log.i("Utils", "- resultCode " + resultCode);
-            GMS_VER = gApi.getClientVersion(context);
-            Log.i("Utils", "- GMS_VER " + GMS_VER);
-            GMS_AVAIL = (resultCode == ConnectionResult.SUCCESS);
-            Log.i("Utils", "- GMS_AVAIL " + GMS_AVAIL);
-            GMS_CHECKED = true;
-        }
-        return GMS_AVAIL && minVersion <= GMS_VER;
+    public static CastContext getCastContext(Context context) {
+        try {
+            return CastContext.getSharedInstance(context);
+        } catch (Exception ex) {}
+        return  null;
     }
 }
+

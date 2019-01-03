@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.addView(mProgressBar, layoutParams);
         setSupportActionBar(toolbar);
 
-        if(Utils.checkPlayServices(this, Utils.GMS_CAST_MINVERSION)) mCastContext = CastContext.getSharedInstance(this);
+        mCastContext = Utils.getCastContext(this);
 
         // listen for navigation events
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -133,34 +133,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawerToggle.syncState();
 
         navigate(mNavItemId);
-
-        /*final ArrayAdapter<Parser> adapter = new ArrayAdapter<Parser>(this,
-                android.R.layout.simple_list_item_1,
-                new Parser[]{new KinoxParser(), new Movie4kParser()});
-
-
-        ((Spinner)findViewById(R.id.spinner)).setAdapter(adapter);
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int parserId = preferences.getInt("parser", KinoxParser.PARSER_ID);
-        ((Spinner)findViewById(R.id.spinner)).setSelection(parserId);
-        ((Spinner)findViewById(R.id.spinner)).setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
-                int parserId = adapter.getItem(position).getParserId();
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                preferences.edit().putInt("parser", parserId).apply();
-                Parser.selectParser(parserId);
-                mDrawerLayout.closeDrawers();
-                navigate(mNavItemId);
-                //mCallbacks.onNavigationModeItemSelected(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-        */
     }
 
     @Override

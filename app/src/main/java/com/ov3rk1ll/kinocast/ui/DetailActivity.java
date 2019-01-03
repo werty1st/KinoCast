@@ -170,7 +170,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         activity = this;
 
         //if (BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
-        if (Utils.checkPlayServices(this, Utils.GMS_CAST_MINVERSION)) mCastContext = CastContext.getSharedInstance(this);
+        mCastContext = Utils.getCastContext(this);
 
         setContentView(R.layout.activity_detail);
 
@@ -622,6 +622,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                     } else {
                         link = Parser.getInstance().getMirrorLink(this, item, host);
                     }
+                    if(link.contains("streamcrypt.net/")) link = Utils.getMultiRedirectTarget(link);
                     host.setUrl(link);
                 }
                 video = host.getVideoPath(this);
@@ -698,16 +699,16 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                         articleParams.put("host_slug", host.getSlug());
                         articleParams.put("host_url", host.getUrl());
                         articleParams.put("host_videourl", host.getVideoUrl());
+                        articleParams.put("Player",(app.getComponent() == null) ? "Chromecast" : app.getComponent().toString());
+                        FlurryAgent.logEvent("MoviePlay", articleParams);
 
                         if (app.getComponent() == null) {
                             startPlaybackOnChromecast(link);
-                            articleParams.put("Player", "Chromecast");
                         } else {
                             intent.setComponent(app.getComponent());
                             articleParams.put("Player", app.getComponent().toString());
                             startActivity(intent);
                         }
-                        FlurryAgent.logEvent("MoviePlay", articleParams);
                         dialog.dismiss();
                     }
                 });
@@ -748,13 +749,13 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         // Use TheMovieDb to get the image
         String url = getCachedImage(96, "poster");
         Log.i("Chromecast", "use image: " + url);
-        if(TextUtils.isEmpty(url)) url = "http://kinocast.ov3rk1ll.com/img/kinocast_icon_512.png";
+        if(TextUtils.isEmpty(url)) url = "https://kinoca.st/img/kinocast_icon_512.png";
         mediaMetadata.addImage(new WebImage(Uri.parse(url)));
 
         // TODO Use Glide to get image
         url = getCachedImage(getResources().getDisplayMetrics().widthPixels, "poster"); // new CoverImage(item.getImageRequest(getResources().getDisplayMetrics().widthPixels, "poster")).getBitmapUrl(getApplication());
         Log.i("Chromecast", "use image: " + url);
-        if(TextUtils.isEmpty(url)) url = "http://kinocast.ov3rk1ll.com/img/kinocast_icon_512.png";
+        if(TextUtils.isEmpty(url)) url = "https://kinoca.st/img/kinocast_icon_512.png";
         mediaMetadata.addImage(new WebImage(Uri.parse(url)));
         Log.i("cast", "play " + link);
         MediaInfo mediaInfo = new MediaInfo.Builder(link)
@@ -768,16 +769,6 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 .getRemoteMediaClient()
                 .load(mediaInfo, true);
   }
-
-    /*public void startCastControllerActivity(Context context, Bundle mediaWrapper, int position, boolean shouldStart) {
-        Intent intent = new Intent(context, ColorfulVideoCastControllerActivity.class);
-        intent.putExtra(VideoCastManager.EXTRA_MEDIA, mediaWrapper);
-        intent.putExtra(VideoCastManager.EXTRA_START_POINT, position);
-        intent.putExtra(VideoCastManager.EXTRA_SHOULD_START, shouldStart);
-        intent.putExtra(ColorfulVideoCastControllerActivity.EXTRA_AB_COLOR, mActionBarBackgroundDrawable.getColor());
-        intent.putExtra(ColorfulVideoCastControllerActivity.EXTRA_TEXT_COLOR, mTitleColor);
-        context.startActivity(intent);
-    }*/
 
     private String getCachedImage(int size, String type){
         TheMovieDb tmdbCache = new TheMovieDb(getApplication());

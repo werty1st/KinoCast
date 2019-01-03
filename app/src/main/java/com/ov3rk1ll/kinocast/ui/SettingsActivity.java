@@ -156,7 +156,8 @@ public class SettingsActivity extends AppCompatActivity {
                     return true;
                 }
             });
-            findPreference("chromecast_prefs").setEnabled(Utils.checkPlayServices(getActivity(), Utils.GMS_CAST_MINVERSION));
+
+            findPreference("chromecast_prefs").setEnabled(Utils.getCastContext(getActivity()) != null);
 
             // Add 'notifications' preferences, and a corresponding header.
         /*PreferenceCategory fakeHeader = new PreferenceCategory(this);
