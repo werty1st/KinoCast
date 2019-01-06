@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.SparseIntArray;
@@ -134,6 +135,13 @@ public class Utils {
         return ((netInfo != null) && netInfo.isConnected());
     }
 
+    public static boolean isDownloadManagerAvailable(Context context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            return true;
+        }
+        return false;
+    }
     public static SparseIntArray getWeightedHostList(Context context) {
         SparseIntArray sparseArray = new SparseIntArray();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);

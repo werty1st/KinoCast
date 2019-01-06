@@ -10,6 +10,7 @@ import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.data.ViewModel;
@@ -57,6 +58,16 @@ public abstract class Parser {
     private static Parser instance;
 
     public static Parser getInstance() {
+        if(instance == null) {
+            Context context = CastApp.getContext();
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            String parser = preferences.getString("parser", Integer.toString(KinoxParser.PARSER_ID));
+            Parser.selectParser(context, Integer.parseInt(parser));
+            if(Parser.getInstance() == null){
+                Parser.selectParser(context, KinoxParser.PARSER_ID);
+            }
+            Log.i("selectParser", "ID is " + Parser.getInstance().getParserId());
+        }
         return instance;
     }
 
@@ -89,7 +100,7 @@ public abstract class Parser {
         for (Class<?> h : PARSER_LIST) {
             try {
                 Parser parser = (Parser) h.getConstructor().newInstance();
-                if(def ==null) def = parser;
+                if(def == null) def = parser;
                 if (parser.getParserId() == id) {
                     return parser;
                 }
@@ -97,6 +108,7 @@ public abstract class Parser {
                 e.printStackTrace();
             }
         }
+        if(def == null) def = new KinoxParser();
         return def;
     }
 

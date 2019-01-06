@@ -86,5 +86,6 @@ Deine Favoriten findest du im Menü auf der linken Seite.</string>
     <string name="error_ssl">SSL Error</string>
     <string name="ssl_connect_anyway">Trotzdem verbinden?</string>
     <string name="media_route_menu_title">Play on&#8230;</string>
+    <string name="player_download_list_entry">Download</string>
 
 </resources>

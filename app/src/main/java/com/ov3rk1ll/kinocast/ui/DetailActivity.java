@@ -2,6 +2,7 @@ package com.ov3rk1ll.kinocast.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
@@ -56,6 +58,7 @@ import com.google.android.gms.common.images.WebImage;
 import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
+import com.ov3rk1ll.kinocast.api.mirror.Direct;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
 import com.ov3rk1ll.kinocast.data.Season;
 import com.ov3rk1ll.kinocast.data.ViewModel;
@@ -71,6 +74,7 @@ import com.ov3rk1ll.kinocast.utils.WeightedHostComparator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -486,9 +490,20 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 articleParams.put("video_name", item.getTitle());
                 articleParams.put("video_type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
                 articleParams.put("video_imdb", item.getImdbId());
-                articleParams.put("video_slug", item.getSlug());
                 articleParams.put("video_url", Parser.getInstance().getPageLink(item));
                 FlurryAgent.logEvent("Movie_Detail", articleParams);
+            }
+
+            String path = Environment.getExternalStorageDirectory().toString() + File.separator + Environment.DIRECTORY_DOWNLOADS;
+            File file = new File(path + File.separator + item.getImdbId() + "_" + item.getLanguageResId() + ".mp4");
+
+            if(file.exists() && file.isFile()){
+                List<Host> hosts = new ArrayList<>(Arrays.asList(item.getMirrors()));
+                Direct d = new Direct();
+                d.setName("Download");
+                d.setUrl(file.getAbsoluteFile().getPath());
+                hosts.add(0, d);
+                item.setMirrors((Host[]) hosts.toArray(new Host[0]));
             }
             return true;
         }
@@ -545,7 +560,8 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
         @Override
         protected List<Host> doInBackground() throws Exception {
             if (item.getType() == ViewModel.Type.SERIES) {
-                return Parser.getInstance().getHosterList(item, s.id, s.episodes[position]);
+                List<Host>  list = Parser.getInstance().getHosterList(item, s.id, s.episodes[position]);
+                return list;
             }
             return null;
         }
@@ -649,6 +665,8 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 return;
             }
 
+            Boolean isDl = host.getName().equals("Download");
+
             if (!TextUtils.isEmpty(link)) {
                 Log.i("Play", "Getting player for '" + link + "'");
                 final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
@@ -661,13 +679,21 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 List<ResolveInfo> launchables = pm.queryIntentActivities(intent, 0);
                 List<AppAdapter.App> apps = new ArrayList<>();
                 Collections.sort(launchables, new ResolveInfo.DisplayNameComparator(pm));
-                if (isCastConnected()) {
+                if (!isDl && isCastConnected()) {
                     apps.add(new AppAdapter.App(
                             getString(R.string.player_chromecast_list_entry),
                             getResources().getDrawable(R.drawable.ic_player_chromecast),
                             null
                     ));
                 }
+                if (!isDl && !link.contains(".m3u8") && Utils.isDownloadManagerAvailable(getContext())) {
+                    apps.add(new AppAdapter.App(
+                            getString(R.string.player_download_list_entry),
+                            getResources().getDrawable(R.drawable.ic_player),
+                            new ComponentName(DetailActivity.this, DetailActivity.class)
+                    ));
+                }
+
                 apps.add(new AppAdapter.App(
                         getString(R.string.player_internal_list_entry),
                         getResources().getDrawable(R.drawable.ic_player),
@@ -703,6 +729,9 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
 
                         if (app.getComponent() == null) {
                             startPlaybackOnChromecast(link);
+                        }
+                        else if (app.getComponent().getClassName() == DetailActivity.class.getName()) {
+                            startDownload(link);
                         } else {
                             intent.setComponent(app.getComponent());
                             startActivity(intent);
@@ -766,7 +795,22 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 .getCurrentCastSession()
                 .getRemoteMediaClient()
                 .load(mediaInfo, true);
-  }
+    }
+
+    public void startDownload(String link) {
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+        request.setDescription(item.getSummary());
+        request.setTitle(item.getTitle());
+        // in order for this if to run, you must use the android 3.2 to compile your app
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, item.getImdbId()+ "_" + item.getLanguageResId() + ".mp4");
+        // get download service and enqueue file
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+    }
 
     private String getCachedImage(int size, String type){
         TheMovieDb tmdbCache = new TheMovieDb(CastApp.GetCheckedContext(getApplication()));
