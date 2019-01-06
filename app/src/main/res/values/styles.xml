@@ -51,4 +51,12 @@
         <item name="android:colorBackground">@android:color/black</item>
     </style>
 
+    <style name="Theme.CastVideosTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="castExpandedControllerToolbarStyle">
+            @style/ThemeOverlay.AppCompat.Dark.ActionBar
+        </item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
 </resources>

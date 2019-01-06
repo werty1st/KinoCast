@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
-        android:name=".TrackingApplication"
+        android:name=".CastApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:installLocation="auto"
@@ -83,6 +83,14 @@
                 android:value="com.ov3rk1ll.kinocast.ui.MainActivity" />
         </activity>
 
+        <activity
+            android:name=".ui.CastExpandedControllerActivity"
+            android:theme="@style/Theme.CastVideosTheme"
+            android:label="@string/title_activity_settings">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ov3rk1ll.kinocast.ui.MainActivity" />
+        </activity>
 
         <activity android:name=".ui.OrderHostlistActivity" android:label="@string/order_hostlist"></activity>
 

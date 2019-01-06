@@ -53,6 +53,7 @@ import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.common.images.WebImage;
+import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.api.mirror.Host;
@@ -771,7 +772,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
   }
 
     private String getCachedImage(int size, String type){
-        TheMovieDb tmdbCache = new TheMovieDb(getApplication());
+        TheMovieDb tmdbCache = new TheMovieDb(CastApp.GetCheckedContext(getApplication()));
         String cacheUrl = Parser.getInstance().getImdbLink(item);
         JSONObject json = tmdbCache.get(cacheUrl, false);
         if(json != null){

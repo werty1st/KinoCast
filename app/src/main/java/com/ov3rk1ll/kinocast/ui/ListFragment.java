@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.data.ViewModel;
@@ -175,7 +176,7 @@ public class ListFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ViewModel[] viewModels) {
-            TheMovieDb tmdbCache = new TheMovieDb(getActivity());
+            TheMovieDb tmdbCache = new TheMovieDb(CastApp.GetCheckedContext(getActivity()));
 
             if(viewModels != null){
                 for(ViewModel m: viewModels){
