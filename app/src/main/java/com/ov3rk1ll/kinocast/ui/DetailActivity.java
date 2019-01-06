@@ -488,7 +488,7 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                 articleParams.put("video_imdb", item.getImdbId());
                 articleParams.put("video_slug", item.getSlug());
                 articleParams.put("video_url", Parser.getInstance().getPageLink(item));
-                FlurryAgent.logEvent("MovieDetail", articleParams);
+                FlurryAgent.logEvent("Movie_Detail", articleParams);
             }
             return true;
         }
@@ -694,20 +694,17 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
                         articleParams.put("video_name", item.getTitle());
                         articleParams.put("video_type", item.getType() == ViewModel.Type.MOVIE ? "Movie" : "Series");
                         articleParams.put("video_imdb", item.getImdbId());
-                        articleParams.put("video_slug", item.getSlug());
                         articleParams.put("video_url", Parser.getInstance().getPageLink(item));
                         articleParams.put("host_name", host.getName());
-                        articleParams.put("host_slug", host.getSlug());
                         articleParams.put("host_url", host.getUrl());
                         articleParams.put("host_videourl", host.getVideoUrl());
                         articleParams.put("Player",(app.getComponent() == null) ? "Chromecast" : app.getComponent().toString());
-                        FlurryAgent.logEvent("MoviePlay", articleParams);
+                        FlurryAgent.logEvent("Movie_Play", articleParams);
 
                         if (app.getComponent() == null) {
                             startPlaybackOnChromecast(link);
                         } else {
                             intent.setComponent(app.getComponent());
-                            articleParams.put("Player", app.getComponent().toString());
                             startActivity(intent);
                         }
                         dialog.dismiss();
