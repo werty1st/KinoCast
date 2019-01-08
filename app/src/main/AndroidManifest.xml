@@ -105,7 +105,27 @@
                 android:value="com.ov3rk1ll.kinocast.ui.DetailActivity" />
         </activity>
 
+        <activity
+            android:name=".ui.DeeplinkActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/FullscreenTheme"
+            android:launchMode="singleTask" android:noHistory="true">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.ov3rk1ll.kinocast.ui.MainActivity" />
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="vivo.sx" android:pathPattern="/.........." />
+                <data android:scheme="https" android:host="vshare.eu" android:pathPattern="/.*\.htm" />
+                <data android:scheme="https" android:host="oload.fun" android:pathPattern="/embed/.*" />
+                <data android:scheme="https" android:host="rapidvideo.com" android:pathPattern="/e/.*" />
+                <data android:scheme="https" android:host="www.rapidvideo.com" android:pathPattern="/e/.*" />
+                <data android:scheme="https" android:host="vidoza.net" android:pathPattern="/............*" />
+            </intent-filter>
 
+        </activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"

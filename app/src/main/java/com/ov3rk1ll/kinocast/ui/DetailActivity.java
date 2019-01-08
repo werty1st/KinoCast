@@ -798,6 +798,13 @@ public class DetailActivity extends AppCompatActivity implements ActionMenuView.
     }
 
     public void startDownload(String link) {
+        if (ContextCompat.checkSelfPermission(this.getBaseContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(getApplicationContext(), "No write Permissions", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
         request.setDescription(item.getSummary());
         request.setTitle(item.getTitle());

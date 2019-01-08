@@ -9,12 +9,9 @@ import com.ov3rk1ll.kinocast.utils.Utils;
 
 import org.jsoup.nodes.Document;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-
-public class Vivo extends Host {
-    private static final String TAG = Vivo.class.getSimpleName();
-    public static final int HOST_ID = 998;
+public class RapidVideo extends Host {
+    private static final String TAG = RapidVideo.class.getSimpleName();
+    public static final int HOST_ID = 71;
 
     @Override
     public int getId() {
@@ -23,7 +20,7 @@ public class Vivo extends Host {
 
     @Override
     public String getName() {
-        return "Vivo.sx";
+        return "RapidVideo";
     }
 
     @Override
@@ -41,11 +38,7 @@ public class Vivo extends Host {
             Document doc = Utils.buildJsoup(url)
                     .get();
 
-            String base64 = doc.select("div#player").attr("data-stream");
-
-            byte[] data = android.util.Base64.decode(base64, android.util.Base64.DEFAULT);
-            return new String(data, StandardCharsets.UTF_8);
-
+            return doc.select("source[type=video/mp4]").attr("src");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +47,9 @@ public class Vivo extends Host {
 
     @Override
     public Boolean canHandleUri(Uri uri) {
-        return "vivo.sx".equalsIgnoreCase(uri.getHost());
+        return ("rapidvideo.com".equalsIgnoreCase(uri.getHost())
+                ||  "www.rapidvideo.com".equalsIgnoreCase(uri.getHost()))
+                && uri.getPath().contains("/e/");
     }
     @Override
     public void handleUri(Uri uri) {

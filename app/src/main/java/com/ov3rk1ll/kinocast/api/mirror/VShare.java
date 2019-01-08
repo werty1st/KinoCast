@@ -1,5 +1,6 @@
 package com.ov3rk1ll.kinocast.api.mirror;
 
+import android.net.Uri;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
@@ -105,6 +106,14 @@ public class VShare extends Host {
             e.printStackTrace();
         }
         return null;
-
     }
+    @Override
+    public Boolean canHandleUri(Uri uri) {
+        return "vshare.eu".equalsIgnoreCase(uri.getHost());
+    }
+    @Override
+    public void handleUri(Uri uri) {
+        setUrl(uri.toString());
+    }
+
 }

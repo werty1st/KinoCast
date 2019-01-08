@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.flurry.android.FlurryAgent;
 import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
 import com.ov3rk1ll.kinocast.api.Parser;
@@ -98,7 +99,6 @@ public class ListFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
                 intent.putExtra(DetailActivity.ARG_ITEM, viewModel);
                 intent.putExtra(DetailActivity.ARG_ITEM, viewModel);
-                //ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), view.findViewById(R.id.image), "photo_hero");
                 getActivity().startActivity(intent);
             }
         });
@@ -185,6 +185,7 @@ public class ListFragment extends Fragment {
                 }
             }else{
                 getException().printStackTrace();
+                FlurryAgent.onError(getString(R.string.connection_error_title), getString(R.string.connection_error_message, Parser.getInstance().getUrl()) , getException());
                 getActivity().findViewById(R.id.list).setVisibility(View.GONE);
                 ((TextView)getActivity().findViewById(R.id.text_error)).setText(
                         getString(R.string.connection_error_title) + "\n" +

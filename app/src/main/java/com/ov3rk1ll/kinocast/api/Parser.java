@@ -56,8 +56,11 @@ public abstract class Parser {
     };
 
     private static Parser instance;
+    public static void setInstance(Parser parser) {
+        instance = parser;
+    }
 
-    public static Parser getInstance() {
+        public static Parser getInstance() {
         if(instance == null) {
             Context context = CastApp.getContext();
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -224,7 +227,7 @@ public abstract class Parser {
     }
 
     public Parser(String url) {
-        this.URL_BASE = url;
+        this.setUrl(url);
     }
 
     public abstract String getDefaultUrl();
@@ -266,6 +269,7 @@ public abstract class Parser {
     }
 
     public void setUrl(String url) {
+        if(Utils.isStringEmpty(url)) url = getDefaultUrl();
         URL_BASE = url;
     }
 

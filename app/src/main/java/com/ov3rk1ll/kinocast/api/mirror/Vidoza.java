@@ -1,5 +1,6 @@
 package com.ov3rk1ll.kinocast.api.mirror;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,7 +32,7 @@ public class Vidoza extends Host {
     public String getVideoPath(DetailActivity.QueryPlayTask queryTask) {
         Log.d(TAG, "GET " + url);
 
-        if(TextUtils.isEmpty(url)) return null;
+        if (TextUtils.isEmpty(url)) return null;
         try {
             queryTask.updateProgress(url);
             Document doc = Utils.buildJsoup(url)
@@ -43,4 +44,15 @@ public class Vidoza extends Host {
         }
         return null;
     }
+
+    @Override
+    public Boolean canHandleUri(Uri uri) {
+        return "vidoza.net".equalsIgnoreCase(uri.getHost()) && uri.getPath().length() >= 12;
+    }
+
+    @Override
+    public void handleUri(Uri uri) {
+        setUrl(uri.toString());
+    }
+
 }

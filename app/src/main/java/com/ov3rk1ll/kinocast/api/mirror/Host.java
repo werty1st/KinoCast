@@ -1,5 +1,7 @@
 package com.ov3rk1ll.kinocast.api.mirror;
 
+import android.net.Uri;
+
 import com.ov3rk1ll.kinocast.ui.DetailActivity;
 
 import java.io.Serializable;
@@ -26,6 +28,7 @@ public abstract class Host implements Serializable {
             VidCloud.class,
             Vivo.class,
             Openload.class,
+            RapidVideo.class,
             Direct.class
     };
 
@@ -34,6 +37,27 @@ public abstract class Host implements Serializable {
             try {
                 Host host = (Host) h.getConstructor().newInstance();
                 if (host.getId() == id) {
+                    return host;
+                }
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public static Host selectByUri(Uri uri ) {
+        for (Class<?> h : HOSTER_LIST) {
+            try {
+                Host host = (Host) h.getConstructor().newInstance();
+                if (host.canHandleUri(uri)) {
+                    host.handleUri(uri);
                     return host;
                 }
             } catch (InstantiationException e) {
@@ -105,4 +129,12 @@ public abstract class Host implements Serializable {
     public String toString() {
         return getName() + " #" + mirror;
     }
+
+    public Boolean canHandleUri(Uri uri) {
+        return false;
+    }
+    public void handleUri(Uri uri) {
+
+    }
+
 }

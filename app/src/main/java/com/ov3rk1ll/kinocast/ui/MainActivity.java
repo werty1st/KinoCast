@@ -32,7 +32,9 @@ import android.widget.ProgressBar;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
+import com.ov3rk1ll.kinocast.CastApp;
 import com.ov3rk1ll.kinocast.R;
+import com.ov3rk1ll.kinocast.api.DeeplinkParser;
 import com.ov3rk1ll.kinocast.api.Parser;
 import com.ov3rk1ll.kinocast.ui.helper.layout.SearchSuggestionAdapter;
 import com.ov3rk1ll.kinocast.utils.Utils;
@@ -74,7 +76,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if(Parser.getInstance().getParserId() == DeeplinkParser.PARSER_ID){
+            CastApp.getApplication().LoadParser();
+        }
         //if(BuildConfig.GMS_CHECK) BaseCastManager.checkGooglePlayServices(this);
         setContentView(R.layout.activity_main);
 
@@ -151,6 +155,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        if(Parser.getInstance().getParserId() == DeeplinkParser.PARSER_ID){
+            CastApp.getApplication().LoadParser();
+        }
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation);
         // remove active state from settings
         if(mNavItemLast != -1) {
