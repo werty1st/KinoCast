@@ -3,7 +3,7 @@ version: "2.2"
 services:
 
     gradle:
-        image: android-gradle:4.6
+        image: werty1st/kinocastbuild:4.6
         build:
             context: .
             dockerfile: Dockerfile
